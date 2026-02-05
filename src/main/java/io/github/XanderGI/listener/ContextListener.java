@@ -1,5 +1,6 @@
-package io.github.XanderGI.listeners;
+package io.github.XanderGI.listener;
 
+import io.github.XanderGI.utils.DatabaseManager;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -11,5 +12,11 @@ public class ContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         Flyway.configure().dataSource("jdbc:sqlite:currencyExchange.db", "","").load().migrate();
         System.out.println("Flyway migration completed successfully!");
+        DatabaseManager.init();
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        DatabaseManager.close();
     }
 }
