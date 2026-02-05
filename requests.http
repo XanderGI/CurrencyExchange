@@ -1,0 +1,11 @@
+### Получить все валюты
+GET http://localhost:8080/currencies
+
+### Получить конкретную валюту (USD)
+GET http://localhost:8080/currency/USD
+
+### Попытка получить несуществующую валюту (Проверка 404)
+GET http://localhost:8080/currency/ZZZ
+
+### Отсутствие кода валюты (Проверка 400)
+GET http://localhost:8080/currency/
