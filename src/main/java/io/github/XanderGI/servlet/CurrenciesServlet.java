@@ -1,9 +1,13 @@
 package io.github.XanderGI.servlet;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.XanderGI.dto.ErrorResponse;
+import io.github.XanderGI.exception.CurrencyAlreadyExistsException;
+import io.github.XanderGI.mapper.CurrencyMapper;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.utils.JsonMapper;
+import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+
+// todo: сделать endpoint для post метода из ТЗ
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
@@ -22,6 +28,24 @@ public class CurrenciesServlet extends HttpServlet {
         try {
             List<Currency> currencies = currencyService.getAllCurrencies();
             JsonMapper.sendJson(resp, currencies, 200);
+        } catch (Exception e) {
+            JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!ValidationUtils.isValid(req, "name", "code", "sign")) {
+            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
+            return;
+        }
+
+        try {
+            Currency currency = CurrencyMapper.toModel(CurrencyMapper.toDto(req));
+            currency = currencyService.addCurrency(currency);
+            JsonMapper.sendJson(resp, currency, 201);
+        } catch (CurrencyAlreadyExistsException e) {
+            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 409);
         } catch (Exception e) {
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }

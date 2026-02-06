@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Currency {
     private Long id;
-    private String code;
     @JsonProperty("name")
     private String fullName;
+    private String code;
     private String sign;
 
-    public Currency(Long id, String code, String fullName, String sign) {
+    public Currency(Long id, String fullName, String code, String sign) {
         this.id = id;
-        this.code = code;
         this.fullName = fullName;
+        this.code = code;
         this.sign = sign;
     }
 

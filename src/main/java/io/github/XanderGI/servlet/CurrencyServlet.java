@@ -32,7 +32,7 @@ public class CurrencyServlet extends HttpServlet {
             Currency currency = currencyService.getCurrencyByCode(codeCurrency);
             JsonMapper.sendJson(resp, currency, 200);
         } catch (CurrencyNotFoundException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency not found"), 404);
+            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
         } catch (Exception e) {
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
