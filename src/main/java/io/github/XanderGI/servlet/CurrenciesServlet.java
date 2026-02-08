@@ -1,6 +1,6 @@
 package io.github.XanderGI.servlet;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import io.github.XanderGI.dto.CurrencyRequestDto;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.exception.CurrencyAlreadyExistsException;
 import io.github.XanderGI.mapper.CurrencyMapper;
@@ -16,8 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
-
-// todo: сделать endpoint для post метода из ТЗ
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
@@ -41,8 +39,8 @@ public class CurrenciesServlet extends HttpServlet {
         }
 
         try {
-            Currency currency = CurrencyMapper.toModel(CurrencyMapper.toDto(req));
-            currency = currencyService.addCurrency(currency);
+            CurrencyRequestDto currencyDto = CurrencyMapper.toDto(req);
+            Currency currency = currencyService.addCurrency(currencyDto);
             JsonMapper.sendJson(resp, currency, 201);
         } catch (CurrencyAlreadyExistsException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 409);
