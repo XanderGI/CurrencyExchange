@@ -3,6 +3,7 @@ package io.github.XanderGI.dao;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.utils.DatabaseManager;
+import io.github.XanderGI.utils.SqlUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -82,7 +83,37 @@ public class ExchangeRateDao {
         return Optional.empty();
     }
 
-    private Currency mapRowToCurrency(ResultSet resultSet, String prefix) throws SQLException{
+    public Optional<ExchangeRate> save(ExchangeRate exchangeRate) {
+        String sql = "INSERT  INTO ExchangeRates(BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?,?,?)";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setLong(1, exchangeRate.getBaseCurrency().getId());
+            preparedStatement.setLong(2, exchangeRate.getTargetCurrency().getId());
+            preparedStatement.setBigDecimal(3, exchangeRate.getRate());
+            preparedStatement.executeUpdate();
+
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                return Optional.of(new ExchangeRate(
+                        resultSet.getLong(1),
+                        exchangeRate.getBaseCurrency(),
+                        exchangeRate.getTargetCurrency(),
+                        exchangeRate.getRate()
+                ));
+            }
+        } catch (SQLException e) {
+            if (SqlUtils.isUniqueConstraintViolation(e)) {
+                return Optional.empty();
+            }
+            throw new RuntimeException(e);
+        }
+
+        return Optional.empty();
+    }
+
+    private Currency mapRowToCurrency(ResultSet resultSet, String prefix) throws SQLException {
         return new Currency(
                 resultSet.getLong(prefix + "id"),
                 resultSet.getString(prefix + "name"),

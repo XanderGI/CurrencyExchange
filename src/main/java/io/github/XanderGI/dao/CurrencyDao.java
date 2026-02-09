@@ -2,8 +2,7 @@ package io.github.XanderGI.dao;
 
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.utils.DatabaseManager;
-import org.sqlite.SQLiteErrorCode;
-import org.sqlite.SQLiteException;
+import io.github.XanderGI.utils.SqlUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,10 +20,10 @@ public class CurrencyDao {
 
             while (resultSet.next()) {
                 Currency currency = new Currency(
-                  resultSet.getLong("id"),
-                  resultSet.getString("fullName"),
-                  resultSet.getString("code"),
-                  resultSet.getString("sign")
+                        resultSet.getLong("id"),
+                        resultSet.getString("fullName"),
+                        resultSet.getString("code"),
+                        resultSet.getString("sign")
                 );
                 currencies.add(currency);
             }
@@ -66,6 +65,7 @@ public class CurrencyDao {
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());
             preparedStatement.executeUpdate();
+
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
                 return Optional.of(
@@ -78,17 +78,12 @@ public class CurrencyDao {
                 );
             }
         } catch (SQLException e) {
-            if (isUniqueConstraintViolation(e)) {
+            if (SqlUtils.isUniqueConstraintViolation(e)) {
                 return Optional.empty();
             }
             throw new RuntimeException(e);
         }
 
         return Optional.empty();
-    }
-
-    private boolean isUniqueConstraintViolation(SQLException e) {
-        return e instanceof SQLiteException sqlEx &&
-                sqlEx.getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT_UNIQUE;
     }
 }

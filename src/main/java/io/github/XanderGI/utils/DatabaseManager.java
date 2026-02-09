@@ -7,9 +7,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 // todo: (done) перенести настройку пула потоков в contextListener(после применения миграций flyway)
-public class DatabaseManager {
+public final class DatabaseManager {
     private static final HikariConfig config = new HikariConfig();
     private static HikariDataSource dataSource;
+
+    private DatabaseManager() {
+
+    }
 
     public static void init() {
         config.setJdbcUrl("jdbc:sqlite:currencyExchange.db");

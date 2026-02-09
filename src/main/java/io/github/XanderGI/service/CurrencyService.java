@@ -21,8 +21,8 @@ public class CurrencyService {
                     .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
     }
 
-    public Currency addCurrency(CurrencyRequestDto currencyDto) {
-        Currency currency = CurrencyMapper.toModel(currencyDto);
+    public Currency addCurrency(CurrencyRequestDto currencyRequestDto) {
+        Currency currency = CurrencyMapper.toModel(currencyRequestDto);
         return currencyDao.save(currency)
                 .orElseThrow(() -> new CurrencyAlreadyExistsException("Currency already exist"));
     }
