@@ -1,2 +1,11 @@
 ### Получить все обменные курсы
 GET http://localhost:8080/exchangeRates
+
+### Получить обменный курс по опреденным валютам (200):
+GET http://localhost:8080/exchangeRate/USDRUB
+
+### Попытка получить несуществующий обменный курс (404):
+GET http://localhost:8080/exchangeRate/RUBUAH
+
+### Проверка отсутсвия валидного кода запроса (400):
+GET http://localhost:8080/exchangeRate/XANDERGI

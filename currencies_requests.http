@@ -4,25 +4,25 @@ GET http://localhost:8080/currencies
 ### Получить конкретную валюту (USD)
 GET http://localhost:8080/currency/USD
 
-### Попытка получить несуществующую валюту (Проверка 404)
+### Попытка получить несуществующую валюту (404)
 GET http://localhost:8080/currency/ZZZ
 
-### Отсутствие кода валюты (Проверка 400)
+### Отсутствие кода валюты (400)
 GET http://localhost:8080/currency/
 
-### Попытка добавить валюту с пустым полем (Ошибка валидации - ожидаем 400)
+### Попытка добавить валюту с пустым полем (400)
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
 name=British Pound&code=&sign=£
 
-### Попытка добавить уже существующую валюту (Дубликат - ожидаем 409)
+### Попытка добавить уже существующую валюту (409)
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
 name=Euro&code=EUR&sign=€
 
-### Добавляем новую валюту RUB (ожидаем 201)
+### Добавляем новую валюту RUB (201)
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 

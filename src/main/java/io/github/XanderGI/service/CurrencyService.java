@@ -18,7 +18,7 @@ public class CurrencyService {
 
     public Currency getCurrencyByCode(String code) {
         return currencyDao.findByCode(code)
-                    .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code: " + code));
+                    .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
     }
 
     public Currency addCurrency(CurrencyRequestDto currencyDto) {
