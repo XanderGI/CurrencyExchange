@@ -1,7 +1,10 @@
 package io.github.XanderGI.model;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import java.math.BigDecimal;
 
+@JsonPropertyOrder({"id", "baseCurrency", "targetCurrency", "rate"})
 public class ExchangeRate {
     private Long Id;
     private Currency baseCurrency;

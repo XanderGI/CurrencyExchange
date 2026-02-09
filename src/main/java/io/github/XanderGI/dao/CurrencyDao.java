@@ -22,15 +22,15 @@ public class CurrencyDao {
             while (resultSet.next()) {
                 Currency currency = new Currency(
                   resultSet.getLong("id"),
-                  resultSet.getString("code"),
                   resultSet.getString("fullName"),
+                  resultSet.getString("code"),
                   resultSet.getString("sign")
                 );
                 currencies.add(currency);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return currencies;
     }
@@ -46,13 +46,13 @@ public class CurrencyDao {
             if (resultSet.next()) {
                 return Optional.of(new Currency(
                         resultSet.getLong("id"),
-                        resultSet.getString("code"),
                         resultSet.getString("fullName"),
+                        resultSet.getString("code"),
                         resultSet.getString("sign")
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return Optional.empty();
     }

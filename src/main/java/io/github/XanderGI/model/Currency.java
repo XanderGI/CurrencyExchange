@@ -1,7 +1,9 @@
 package io.github.XanderGI.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+@JsonPropertyOrder({ "id", "name", "code", "sign" })
 public class Currency {
     private Long id;
     @JsonProperty("name")
@@ -16,8 +18,8 @@ public class Currency {
         this.sign = sign;
     }
 
-    public Currency(String code, String fullName, String sign) {
-        this(null, code, fullName, sign);
+    public Currency(String fullName, String code, String sign) {
+        this(null, fullName, code, sign);
     }
 
     public Long getId() {
