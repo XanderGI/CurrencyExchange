@@ -9,3 +9,27 @@ GET http://localhost:8080/exchangeRate/RUBUAH
 
 ### Проверка отсутсвия валидного кода запроса (400):
 GET http://localhost:8080/exchangeRate/XANDERGI
+
+### Успешное добавние обменной пары (201):
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=EUR&targetCurrencyCode=RUB&rate=92.02
+
+### Ошибка валидации: отсутствует поле rate (400):
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=USD&targetCurrencyCode=EUR
+
+### Ошибка: одна(или обе) из валют не существует (404)
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=XGI&targetCurrencyCode=RPC&rate=666.666
+
+### Проверка на уже существующу обменную пару в БД (409):
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=USD&targetCurrencyCode=RUB&rate=77.23
