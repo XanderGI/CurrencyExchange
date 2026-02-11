@@ -18,11 +18,11 @@ public class CurrencyService {
 
     public Currency getCurrencyByCode(String code) {
         return currencyDao.findByCode(code)
-                    .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
+                .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
     }
 
-    public Currency addCurrency(CurrencyRequestDto currencyRequestDto) {
-        Currency currency = CurrencyMapper.toModel(currencyRequestDto);
+    public Currency addCurrency(CurrencyRequestDto dto) {
+        Currency currency = CurrencyMapper.toModel(dto);
         return currencyDao.save(currency)
                 .orElseThrow(() -> new CurrencyAlreadyExistsException("Currency already exist"));
     }

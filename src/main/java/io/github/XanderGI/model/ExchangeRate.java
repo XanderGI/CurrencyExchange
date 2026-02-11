@@ -40,6 +40,10 @@ public class ExchangeRate {
         return rate;
     }
 
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
     @Override
     public String toString() {
         return "ExchangeRate{" +

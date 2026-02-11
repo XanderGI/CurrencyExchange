@@ -43,6 +43,10 @@ public class ExchangeRatesServlet extends HttpServlet {
             ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toDto(req);
             ExchangeRate exchangeRate = exchangeRateService.addExchangeRate(exchangeRateRequestDto);
             JsonMapper.sendJson(resp, exchangeRate, 201);
+        } catch (NumberFormatException e) {
+            JsonMapper.sendJson(resp, new ErrorResponse("Invalid format number"), 400);
+        } catch (IllegalArgumentException e) {
+            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 400);
         } catch (CurrencyNotFoundException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
         } catch (ExchangeRateAlreadyExistsException e) {

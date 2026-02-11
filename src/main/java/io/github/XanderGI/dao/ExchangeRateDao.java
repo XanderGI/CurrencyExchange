@@ -84,7 +84,7 @@ public class ExchangeRateDao {
     }
 
     public Optional<ExchangeRate> save(ExchangeRate exchangeRate) {
-        String sql = "INSERT  INTO ExchangeRates(BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?,?,?)";
+        String sql = "INSERT INTO ExchangeRates(BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?,?,?)";
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -111,6 +111,31 @@ public class ExchangeRateDao {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<ExchangeRate> update(ExchangeRate exchangeRate) {
+        String sql = "UPDATE ExchangeRates SET Rate = ? WHERE ID = ?";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setBigDecimal(1, exchangeRate.getRate());
+            preparedStatement.setLong(2, exchangeRate.getId());
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0) {
+                return Optional.of(new ExchangeRate(
+                        exchangeRate.getId(),
+                        exchangeRate.getBaseCurrency(),
+                        exchangeRate.getTargetCurrency(),
+                        exchangeRate.getRate()
+                ));
+            }
+
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Currency mapRowToCurrency(ResultSet resultSet, String prefix) throws SQLException {

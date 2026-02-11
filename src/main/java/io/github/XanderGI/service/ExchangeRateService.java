@@ -24,19 +24,44 @@ public class ExchangeRateService {
                 .orElseThrow(() -> new ExchangeRateNotFoundException("ExchangeRate not found"));
     }
 
-    public ExchangeRate addExchangeRate(ExchangeRateRequestDto exchangeRateRequestDto) {
-        Currency baseCurrency = currencyDao.findByCode(exchangeRateRequestDto.getBaseCurrencyCode())
+    public ExchangeRate addExchangeRate(ExchangeRateRequestDto dto) {
+        validateExchangeRateData(dto);
+
+        Currency baseCurrency = currencyDao.findByCode(dto.getBaseCurrencyCode())
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
-        Currency targetCurrency = currencyDao.findByCode(exchangeRateRequestDto.getTargetCurrencyCode())
+        Currency targetCurrency = currencyDao.findByCode(dto.getTargetCurrencyCode())
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
 
         ExchangeRate exchangeRate = new ExchangeRate(
                 baseCurrency,
                 targetCurrency,
-                exchangeRateRequestDto.getRate()
+                dto.getRate()
         );
 
         return exchangeRateDao.save(exchangeRate)
                 .orElseThrow(() -> new ExchangeRateAlreadyExistsException("ExchangeRate already exist"));
+    }
+
+    public ExchangeRate updateExchangeRate(ExchangeRateRequestDto dto) {
+        validateExchangeRateData(dto);
+
+        ExchangeRate exchangeRate = getExchangeRateByCode(
+                dto.getBaseCurrencyCode(),
+                dto.getTargetCurrencyCode()
+        );
+        exchangeRate.setRate(dto.getRate());
+
+        return exchangeRateDao.update(exchangeRate)
+                .orElseThrow(() -> new ExchangeRateNotFoundException("ExchangeRate not found"));
+    }
+
+    private void validateExchangeRateData(ExchangeRateRequestDto dto) {
+        if (dto.getRate().signum() <= 0) {
+            throw new IllegalArgumentException("The rate value must be positive");
+        }
+
+        if (dto.getBaseCurrencyCode().equals(dto.getTargetCurrencyCode())) {
+            throw new IllegalArgumentException("Currency codes should not be repeated");
+        }
     }
 }

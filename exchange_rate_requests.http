@@ -33,3 +33,80 @@ POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded
 
 baseCurrencyCode=USD&targetCurrencyCode=RUB&rate=77.23
+
+### Проверка на одинаковые коды валют (400):
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=RUB&targetCurrencyCode=RUB&rate=1
+
+### Проверка на отрицательное значение rate (400):
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=USD&targetCurrencyCode=RUB&rate=-1
+
+### Успешное изменение значения обменной пары (200):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=77.43
+
+### Проверка отсутсвия валидного кода запроса (400):
+PATCH http://localhost:8080/exchangeRate/USD
+Content-Type: application/x-www-form-urlencoded
+
+rate=77.43
+
+### Проверка отсутсвия валидного кода запроса (400):
+PATCH http://localhost:8080/exchangeRate/
+Content-Type: application/x-www-form-urlencoded
+
+rate=77.43
+
+### Попытка отправить пустой body (400):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+
+### Попытка отправить корректный body но с пустым значением (400):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=
+
+### Попытка отправить корректный body но с null (400):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=null
+
+### Попытка отправить корректный body но с "," в значении (400):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=77,43
+
+### Попытка отправить корректный body но с отрицательным значением (400):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=-77.43
+
+### Попытка отправить некорректный body (400):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+amount=47
+
+### Попытка отправить корректный body но с некорректным типом данных (400):
+PATCH http://localhost:8080/exchangeRate/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=бесплатно?
+
+### Не существующая обменная пара (404):
+PATCH http://localhost:8080/exchangeRate/XYZABC
+Content-Type: application/x-www-form-urlencoded
+
+rate=666.666

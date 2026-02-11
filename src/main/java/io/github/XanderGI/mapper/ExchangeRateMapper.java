@@ -14,4 +14,12 @@ public class ExchangeRateMapper {
                 new BigDecimal(req.getParameter("rate"))
         );
     }
+
+    public static ExchangeRateRequestDto toDtoFromPatchRequest(String baseCode, String targetCode, String rate) {
+        return new ExchangeRateRequestDto(
+                baseCode,
+                targetCode,
+                new BigDecimal(rate)
+        );
+    }
 }
