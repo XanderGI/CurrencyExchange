@@ -41,7 +41,7 @@ public class ExchangeRateService {
     }
 
     public ExchangeRate addExchangeRate(ExchangeRateRequestDto dto) {
-        validateExchangeRateData(dto);
+        validate(dto);
 
         Currency baseCurrency = currencyDao.findByCode(dto.getBaseCurrencyCode())
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
@@ -59,7 +59,7 @@ public class ExchangeRateService {
     }
 
     public ExchangeRate updateExchangeRate(ExchangeRateRequestDto dto) {
-        validateExchangeRateData(dto);
+        validate(dto);
 
         ExchangeRate exchangeRate = getExchangeRateByCode(
                 dto.getBaseCurrencyCode(),
@@ -72,6 +72,8 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateResponseConvertDto convertCurrency(ExchangeRateRequestConvertDto dto) {
+        validate(dto);
+
         List<ExchangeRate> exchangeRates = exchangeRateDao.findAllUsdRelatedPairs(
                 dto.getBaseCurrencyCode(),
                 dto.getTargetCurrencyCode()
@@ -95,8 +97,8 @@ public class ExchangeRateService {
                 .filter(exRate -> isPair(exRate, base, target))
                 .findFirst()
                 .map(exRate -> {
-                    BigDecimal rate = exRate.getRate();
-                    BigDecimal convertedAmount = amount.multiply(rate);
+                    BigDecimal rate = exRate.getRate().setScale(6, RoundingMode.HALF_EVEN);
+                    BigDecimal convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
 
                     return ExchangeRateMapper.toResponseDto(
                             exRate.getBaseCurrency(),
@@ -113,8 +115,9 @@ public class ExchangeRateService {
                 .filter(exRate -> isPair(exRate, target, base))
                 .findFirst()
                 .map(exRate -> {
-                    BigDecimal rate = BigDecimal.ONE.divide(exRate.getRate(), 6, RoundingMode.HALF_UP);
-                    BigDecimal convertedAmount = rate.multiply(amount);
+                    BigDecimal rate = BigDecimal.ONE.divide(exRate.getRate(), 6, RoundingMode.HALF_EVEN);
+                    BigDecimal convertedAmount = rate.multiply(amount).setScale(2, RoundingMode.HALF_EVEN);
+
                     return ExchangeRateMapper.toResponseDto(
                             exRate.getTargetCurrency(),
                             exRate.getBaseCurrency(),
@@ -134,8 +137,8 @@ public class ExchangeRateService {
 
                             Currency baseCurrency = extractNonUsdCurrency(usdToBaseRate);
                             Currency targetCurrency = extractNonUsdCurrency(usdToTargetRate);
-                            BigDecimal rate = rateBaseToUsd.multiply(rateUsdToTarget);
-                            BigDecimal convertedAmount = amount.multiply(rate);
+                            BigDecimal rate = rateBaseToUsd.multiply(rateUsdToTarget).setScale(6, RoundingMode.HALF_EVEN);
+                            BigDecimal convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
 
                             return ExchangeRateMapper.toResponseDto(
                                     baseCurrency,
@@ -147,12 +150,24 @@ public class ExchangeRateService {
                         }));
     }
 
-    private void validateExchangeRateData(ExchangeRateRequestDto dto) {
+    private void validate(ExchangeRateRequestDto dto) {
+        checkCurrencyCodesAreDifferent(dto.getBaseCurrencyCode(), dto.getTargetCurrencyCode());
+
         if (dto.getRate().signum() <= 0) {
             throw new IllegalArgumentException("The rate value must be positive");
         }
+    }
 
-        if (dto.getBaseCurrencyCode().equals(dto.getTargetCurrencyCode())) {
+    private void validate(ExchangeRateRequestConvertDto dto) {
+        checkCurrencyCodesAreDifferent(dto.getBaseCurrencyCode(), dto.getTargetCurrencyCode());
+
+        if (dto.getAmount().signum() <= 0) {
+            throw new IllegalArgumentException("The amount value must be positive");
+        }
+    }
+
+    private void checkCurrencyCodesAreDifferent(String base, String target) {
+        if (base.equals(target)) {
             throw new IllegalArgumentException("Currency codes should not be repeated");
         }
     }

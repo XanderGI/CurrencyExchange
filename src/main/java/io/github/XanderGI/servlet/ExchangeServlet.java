@@ -28,7 +28,7 @@ public class ExchangeServlet extends HttpServlet {
         }
 
         if (!ValidationUtils.isValidCurrencyCodes(req, "to", "from")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate are missing in the address"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), 400);
             return;
         }
 

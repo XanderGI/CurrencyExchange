@@ -39,6 +39,11 @@ public class ExchangeRatesServlet extends HttpServlet {
             return;
         }
 
+        if (!ValidationUtils.isValidCurrencyCodes(req, "baseCurrencyCode", "targetCurrencyCode")) {
+            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), 400);
+            return;
+        }
+
         try {
             ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(req);
             ExchangeRate exchangeRate = exchangeRateService.addExchangeRate(exchangeRateRequestDto);

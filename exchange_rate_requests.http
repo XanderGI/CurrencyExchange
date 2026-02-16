@@ -22,6 +22,12 @@ Content-Type: application/x-www-form-urlencoded
 
 baseCurrencyCode=USD&targetCurrencyCode=EUR
 
+### Ошибка: некорретный код валюты в запросе (400):
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=XI&targetCurrencyCode=RC&rate=666.666
+
 ### Ошибка: одна(или обе) из валют не существует (404)
 POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded
@@ -122,8 +128,44 @@ Content-Type: application/x-www-form-urlencoded
 ### Успешный кросс-курс RUB-UAH (200) ("convertedAmount": 428.003616600):
 GET http://localhost:8080/exchange?from=RUB&to=UAH&amount=774.30
 
-### Успешный кросс-курс RUB-UAH (200) ("convertedAmount": 8.54708222223450):
+### Успешный кросс-курс RUB-EUR (200) ("convertedAmount": 8.54708222223450):
 GET http://localhost:8080/exchange?from=RUB&to=EUR&amount=774.30
 
 ### Обменная пара не найдена (404):
 GET http://localhost:8080/exchange?from=RUB&to=INR&amount=774.30
+
+### Попытка обмена одинаковой пары валют (400):
+GET http://localhost:8080/exchange?from=RUB&to=RUB&amount=137.69
+
+### Попытка обмена при пустых значениях (400):
+GET http://localhost:8080/exchange?from=&to=&amount=137.69
+
+### Попытка обмена при пустых значениях (400):
+GET http://localhost:8080/exchange?from=&to=&amount=137.69
+
+### Попытка обмена при amount = infitiny(400):
+GET http://localhost:8080/exchange?from=RUB&to=USD&amount=infinity
+
+### Попытка обмена при amount < 0 (400):
+GET http://localhost:8080/exchange?from=RUB&to=USD&amount=-123
+
+### Попытка обмена при amount = 0 (400):
+GET http://localhost:8080/exchange?from=RUB&to=USD&amount=0
+
+### Попытка обмена, когда amount это текст (400):
+GET http://localhost:8080/exchange?from=USD&to=RUB&amount=ten
+
+### Попытка обмена с некорректным разделителем дроби (400):
+GET http://localhost:8080/exchange?from=USD&to=RUB&amount=10,5
+
+### Некорректный код валюты (слишком короткий) (400):
+GET http://localhost:8080/exchange?from=US&to=RUB&amount=10
+
+### Некорректный код валюты (слишком длинный) (400):
+GET http://localhost:8080/exchange?from=USDT&to=TRX&amount=10
+
+### Отсутствует параметр amount (400):
+GET http://localhost:8080/exchange?from=USD&to=RUB
+
+### Отсутствует параметр from (400):
+GET http://localhost:8080/exchange?to=RUB&amount=10
