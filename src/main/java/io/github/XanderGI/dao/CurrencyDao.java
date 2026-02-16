@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// todo: почему я здесь не юзаю маппер когда пытаюсь вернуть объект?! Как будто бы надо сделать.
+
 public class CurrencyDao {
 
     public List<Currency> findAll() {

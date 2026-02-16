@@ -66,7 +66,7 @@ public class ExchangeRateServlet extends HttpServlet {
                 return;
             }
 
-            ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toDtoFromPatchRequest(baseCode, targetCode, rateValue);
+            ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(baseCode, targetCode, rateValue);
             ExchangeRate exchangeRate = exchangeRateService.updateExchangeRate(exchangeRateRequestDto);
             JsonMapper.sendJson(resp, exchangeRate, 200);
         } catch (NumberFormatException e) {

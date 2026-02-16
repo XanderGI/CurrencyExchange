@@ -2,7 +2,6 @@ package io.github.XanderGI.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -24,7 +23,17 @@ public final class ValidationUtils {
         return true;
     }
 
-    public static Map<String, String> parseBodyParams(String body) throws IOException {
+    public static boolean isValidCurrencyCodes(HttpServletRequest req, String... requiredFields) {
+        for (String field : requiredFields) {
+            String code = req.getParameter(field);
+            if (code.length() != 3) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static Map<String, String> parseBodyParams(String body) {
         Map<String, String> map = new HashMap<>();
 
         if (body.isEmpty()) {

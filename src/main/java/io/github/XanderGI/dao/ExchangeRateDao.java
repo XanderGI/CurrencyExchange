@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// todo: почему я здесь не юзаю маппер когда пытаюсь вернуть объект?! Как будто бы надо сделать.
+
 public class ExchangeRateDao {
 
     public List<ExchangeRate> findAll() {
@@ -136,6 +138,48 @@ public class ExchangeRateDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<ExchangeRate> findAllUsdRelatedPairs(String baseCode, String targetCode) {
+        List<ExchangeRate> exchangeRates = new ArrayList<>();
+
+        String sql = """
+                SELECT 
+                    Rate,
+                    base.ID AS base_id, base.FullName AS base_name, base.code AS base_code, base.sign AS base_sign,
+                    target.ID AS target_id, target.FullName AS target_name, target.code AS target_code, target.sign AS target_sign
+                FROM ExchangeRates
+                JOIN Currencies base ON ExchangeRates.BaseCurrencyId = base.ID
+                JOIN Currencies target ON ExchangeRates.TargetCurrencyId = target.ID
+                WHERE (base.code = 'USD' OR target.code = 'USD') AND ((base.code = ? OR target.code = ?) OR (base.code = ? OR target.code = ?))
+                """;
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, baseCode);
+            preparedStatement.setString(2, baseCode);
+            preparedStatement.setString(3, targetCode);
+            preparedStatement.setString(4, targetCode);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Currency baseCurrency = mapRowToCurrency(resultSet, "base_");
+                Currency targetCurrency = mapRowToCurrency(resultSet, "target_");
+
+                ExchangeRate exchangeRate = new ExchangeRate(
+                        baseCurrency,
+                        targetCurrency,
+                        resultSet.getBigDecimal("rate")
+                );
+
+                exchangeRates.add(exchangeRate);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return exchangeRates;
     }
 
     private Currency mapRowToCurrency(ResultSet resultSet, String prefix) throws SQLException {

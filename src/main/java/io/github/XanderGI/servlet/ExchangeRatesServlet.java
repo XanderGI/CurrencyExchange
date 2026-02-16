@@ -40,7 +40,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         }
 
         try {
-            ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toDto(req);
+            ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(req);
             ExchangeRate exchangeRate = exchangeRateService.addExchangeRate(exchangeRateRequestDto);
             JsonMapper.sendJson(resp, exchangeRate, 201);
         } catch (NumberFormatException e) {
