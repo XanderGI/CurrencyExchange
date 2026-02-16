@@ -5,6 +5,7 @@ import io.github.XanderGI.exception.CurrencyNotFoundException;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.utils.JsonMapper;
+import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+
+// todo: done забыл проверку на длину кода символа.
 
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
@@ -27,6 +30,11 @@ public class CurrencyServlet extends HttpServlet {
         }
 
         String codeCurrency = pathInfo.substring(1).toUpperCase();
+
+        if (!ValidationUtils.isCodeValid(codeCurrency)) {
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), 400);
+            return;
+        }
 
         try {
             Currency currency = currencyService.getCurrencyByCode(codeCurrency);

@@ -23,14 +23,18 @@ public final class ValidationUtils {
         return true;
     }
 
-    public static boolean isValidCurrencyCodes(HttpServletRequest req, String... requiredFields) {
+    public static boolean areParametersValid(HttpServletRequest req, String... requiredFields) {
         for (String field : requiredFields) {
             String code = req.getParameter(field);
-            if (code.length() != 3) {
+            if (!isCodeValid(code)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public static boolean isCodeValid(String code) {
+        return code != null && code.length() == 3;
     }
 
     public static Map<String, String> parseBodyParams(String body) {
