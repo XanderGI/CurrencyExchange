@@ -17,8 +17,6 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
-// todo: не забывать сделать ограничения сверху на rate - чтобы не было infinity.
-
 public class ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao;
     private final CurrencyDao currencyDao = new CurrencyDao();

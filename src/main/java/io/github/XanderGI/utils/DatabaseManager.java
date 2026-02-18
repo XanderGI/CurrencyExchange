@@ -6,7 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-// todo: (done) перенести настройку пула потоков в contextListener(после применения миграций flyway)
 public final class DatabaseManager {
     private static final HikariConfig config = new HikariConfig();
     private static HikariDataSource dataSource;
