@@ -1,11 +1,8 @@
 package io.github.XanderGI.utils;
 
+import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
+import io.github.XanderGI.dto.ExchangeRateRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class ValidationUtils {
 
@@ -13,7 +10,7 @@ public final class ValidationUtils {
 
     }
 
-    public static boolean isValid(HttpServletRequest req, String... requiredFields) {
+    public static boolean hasRequiredFields(HttpServletRequest req, String... requiredFields) {
         for (String field : requiredFields) {
             String value = req.getParameter(field);
             if (value == null || value.isEmpty()) {
@@ -23,7 +20,7 @@ public final class ValidationUtils {
         return true;
     }
 
-    public static boolean areParametersValid(HttpServletRequest req, String... requiredFields) {
+    public static boolean areCodesValid(HttpServletRequest req, String... requiredFields) {
         for (String field : requiredFields) {
             String code = req.getParameter(field);
             if (!isCodeValid(code)) {
@@ -34,32 +31,37 @@ public final class ValidationUtils {
     }
 
     public static boolean isCodeValid(String code) {
-        return code != null && code.length() == 3;
+        if (code == null || code.length() != 3) {
+            return false;
+        }
+
+        for (char character : code.toCharArray()) {
+            if (character < 'A' || character > 'Z') {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public static Map<String, String> parseBodyParams(String body) {
-        Map<String, String> map = new HashMap<>();
+    public static void validate(ExchangeRateRequestDto dto) {
+        checkCurrencyCodesAreDifferent(dto.getBaseCurrencyCode(), dto.getTargetCurrencyCode());
 
-        if (body.isEmpty()) {
-            return map;
+        if (dto.getRate().signum() <= 0) {
+            throw new IllegalArgumentException("The rate value must be positive");
         }
+    }
 
-        String[] pairs = body.split("&");
-        for (String element : pairs) {
+    public static void validate(ExchangeRateRequestConvertDto dto) {
+        checkCurrencyCodesAreDifferent(dto.getBaseCurrencyCode(), dto.getTargetCurrencyCode());
 
-            if (element.isEmpty()) {
-                continue;
-            }
-
-            String[] parts = element.split("=", 2);
-            String decodedKey = URLDecoder.decode(parts[0], StandardCharsets.UTF_8);
-            if (parts.length == 2) {
-                String decodedValue = URLDecoder.decode(parts[1], StandardCharsets.UTF_8);
-                map.putIfAbsent(decodedKey, decodedValue);
-            } else {
-                map.putIfAbsent(decodedKey, "");
-            }
+        if (dto.getAmount().signum() <= 0) {
+            throw new IllegalArgumentException("The amount value must be positive");
         }
-        return map;
+    }
+
+    public static void checkCurrencyCodesAreDifferent(String base, String target) {
+        if (base.equals(target)) {
+            throw new IllegalArgumentException("Currency codes should not be repeated");
+        }
     }
 }

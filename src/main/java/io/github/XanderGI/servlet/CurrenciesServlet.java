@@ -34,7 +34,7 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!ValidationUtils.isValid(req, "name", "code", "sign")) {
+        if (!ValidationUtils.hasRequiredFields(req, "name", "code", "sign")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
             return;
         }

@@ -1,5 +1,7 @@
 package io.github.XanderGI.servlet;
 
+import io.github.XanderGI.dao.CurrencyDao;
+import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
 import io.github.XanderGI.exception.CurrencyNotFoundException;
@@ -20,7 +22,7 @@ import java.util.List;
 
 @WebServlet("/exchangeRates")
 public class ExchangeRatesServlet extends HttpServlet {
-    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final ExchangeRateService exchangeRateService = new ExchangeRateService(new ExchangeRateDao(), new CurrencyDao());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,12 +36,12 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!ValidationUtils.isValid(req, "baseCurrencyCode", "targetCurrencyCode", "rate")) {
+        if (!ValidationUtils.hasRequiredFields(req, "baseCurrencyCode", "targetCurrencyCode", "rate")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
             return;
         }
 
-        if (!ValidationUtils.areParametersValid(req, "baseCurrencyCode", "targetCurrencyCode")) {
+        if (!ValidationUtils.areCodesValid(req, "baseCurrencyCode", "targetCurrencyCode")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), 400);
             return;
         }

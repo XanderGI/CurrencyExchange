@@ -1,5 +1,7 @@
 package io.github.XanderGI.servlet;
 
+import io.github.XanderGI.dao.CurrencyDao;
+import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.CurrencyPair;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
@@ -8,6 +10,7 @@ import io.github.XanderGI.mapper.ExchangeRateMapper;
 import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.service.ExchangeRateService;
 import io.github.XanderGI.utils.JsonMapper;
+import io.github.XanderGI.utils.RequestUtils;
 import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,7 +24,7 @@ import java.util.Map;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
-    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final ExchangeRateService exchangeRateService = new ExchangeRateService(new ExchangeRateDao(), new CurrencyDao());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -88,7 +91,7 @@ public class ExchangeRateServlet extends HttpServlet {
             while ((line = reader.readLine()) != null) {
                 parameters.append(line);
             }
-            return ValidationUtils.parseBodyParams(parameters.toString());
+            return RequestUtils.parseBodyParams(parameters.toString());
         }
     }
 

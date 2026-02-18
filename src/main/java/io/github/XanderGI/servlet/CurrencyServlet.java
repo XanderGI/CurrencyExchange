@@ -28,7 +28,7 @@ public class CurrencyServlet extends HttpServlet {
             return;
         }
 
-        String codeCurrency = pathInfo.substring(1).toUpperCase();
+        String codeCurrency = pathInfo.substring(1);
 
         if (!ValidationUtils.isCodeValid(codeCurrency)) {
             JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), 400);

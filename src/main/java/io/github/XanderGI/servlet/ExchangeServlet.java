@@ -1,11 +1,12 @@
 package io.github.XanderGI.servlet;
 
+import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
 import io.github.XanderGI.exception.ExchangeRateNotFoundException;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
-import io.github.XanderGI.service.ExchangeRateService;
+import io.github.XanderGI.service.ExchangeService;
 import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
@@ -18,23 +19,23 @@ import java.io.IOException;
 
 @WebServlet("/exchange")
 public class ExchangeServlet extends HttpServlet {
-    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final ExchangeService exchangeService = new ExchangeService(new ExchangeRateDao());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!ValidationUtils.isValid(req, "to", "from", "amount")) {
+        if (!ValidationUtils.hasRequiredFields(req, "to", "from", "amount")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
             return;
         }
 
-        if (!ValidationUtils.areParametersValid(req, "to", "from")) {
+        if (!ValidationUtils.areCodesValid(req, "to", "from")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), 400);
             return;
         }
 
         try {
             ExchangeRateRequestConvertDto reqDto = ExchangeRateMapper.toConvertDto(req);
-            ExchangeRateResponseConvertDto respDto = exchangeRateService.convertCurrency(reqDto);
+            ExchangeRateResponseConvertDto respDto = exchangeService.convertCurrency(reqDto);
             JsonMapper.sendJson(resp, respDto, 200);
         } catch (NumberFormatException e) {
             JsonMapper.sendJson(resp, new ErrorResponse("Invalid format number"), 400);

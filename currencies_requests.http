@@ -7,6 +7,12 @@ GET http://localhost:8080/currency/USD
 ### Попытка получить несуществующую валюту (404)
 GET http://localhost:8080/currency/ZZZ
 
+### Попытка получить валюту в нижнем регистре (400)
+GET http://localhost:8080/currency/usd
+
+### Попытка получить несуществующую валюту, нарушающую ISO (400)
+GET http://localhost:8080/currency/123
+
 ### Отсутствие кода валюты (400)
 GET http://localhost:8080/currency/
 

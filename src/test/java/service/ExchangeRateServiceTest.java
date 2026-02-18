@@ -1,11 +1,13 @@
 package service;
 
+import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.service.ExchangeRateService;
+import io.github.XanderGI.service.ExchangeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,8 +27,11 @@ public class ExchangeRateServiceTest {
     @Mock
     private ExchangeRateDao exchangeRateDao;
 
+    @Mock
+    private CurrencyDao currencyDao;
+
     @InjectMocks
-    private ExchangeRateService service;
+    private ExchangeService service;
 
     @Test
     void shouldConvertCurrencyUsingCrossRate() {
