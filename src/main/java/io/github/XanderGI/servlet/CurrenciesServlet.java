@@ -1,5 +1,6 @@
 package io.github.XanderGI.servlet;
 
+import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dto.CurrencyRequestDto;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.exception.CurrencyAlreadyExistsException;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
-    private final CurrencyService currencyService = new CurrencyService();
+    private final CurrencyService currencyService = new CurrencyService(new CurrencyDao());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

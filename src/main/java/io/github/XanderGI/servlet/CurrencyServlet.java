@@ -1,5 +1,6 @@
 package io.github.XanderGI.servlet;
 
+import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.exception.CurrencyNotFoundException;
 import io.github.XanderGI.model.Currency;
@@ -14,11 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-// todo: done забыл проверку на длину кода символа.
-
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
-    private final CurrencyService currencyService = new CurrencyService();
+    private final CurrencyService currencyService = new CurrencyService(new CurrencyDao());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

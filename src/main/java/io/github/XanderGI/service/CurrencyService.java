@@ -10,7 +10,11 @@ import io.github.XanderGI.model.Currency;
 import java.util.List;
 
 public class CurrencyService {
-    private final CurrencyDao currencyDao = new CurrencyDao();
+    private final CurrencyDao currencyDao;
+
+    public CurrencyService(CurrencyDao currencyDao) {
+        this.currencyDao = currencyDao;
+    }
 
     public List<Currency> getAllCurrencies() {
         return currencyDao.findAll();
@@ -24,6 +28,6 @@ public class CurrencyService {
     public Currency addCurrency(CurrencyRequestDto dto) {
         Currency currency = CurrencyMapper.toModel(dto);
         return currencyDao.save(currency)
-                .orElseThrow(() -> new CurrencyAlreadyExistsException("Currency already exist"));
+                .orElseThrow(() -> new CurrencyAlreadyExistsException("Currency already exists"));
     }
 }
