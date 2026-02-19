@@ -2,7 +2,6 @@ package io.github.XanderGI.servlet;
 
 import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dto.ErrorResponse;
-import io.github.XanderGI.exception.CurrencyNotFoundException;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.utils.JsonMapper;
@@ -24,7 +23,7 @@ public class CurrencyServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code is missing in URL"),400);
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency code is missing in URL"), 400);
             return;
         }
 
@@ -35,14 +34,7 @@ public class CurrencyServlet extends HttpServlet {
             return;
         }
 
-        try {
-            Currency currency = currencyService.getCurrencyByCode(codeCurrency);
-            JsonMapper.sendJson(resp, currency, 200);
-        } catch (CurrencyNotFoundException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
-        }
+        Currency currency = currencyService.getCurrencyByCode(codeCurrency);
+        JsonMapper.sendJson(resp, currency, 200);
     }
 }
