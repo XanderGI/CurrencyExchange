@@ -28,6 +28,7 @@ public class CurrenciesServlet extends HttpServlet {
             List<Currency> currencies = currencyService.getAllCurrencies();
             JsonMapper.sendJson(resp, currencies, 200);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }
@@ -39,6 +40,13 @@ public class CurrenciesServlet extends HttpServlet {
             return;
         }
 
+        String code = req.getParameter("code");
+
+        if (!ValidationUtils.isCodeValid(code)) {
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), 400);
+            return;
+        }
+
         try {
             CurrencyRequestDto currencyDto = CurrencyMapper.toDto(req);
             Currency currency = currencyService.addCurrency(currencyDto);
@@ -46,6 +54,7 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (CurrencyAlreadyExistsException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 409);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }

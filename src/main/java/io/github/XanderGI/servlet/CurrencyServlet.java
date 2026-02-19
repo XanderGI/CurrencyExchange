@@ -24,11 +24,11 @@ public class CurrencyServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code is missing in URL"),400 );
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency code is missing in URL"),400);
             return;
         }
 
-        String codeCurrency = pathInfo.substring(1);
+        String codeCurrency = pathInfo.substring(1).toUpperCase();
 
         if (!ValidationUtils.isCodeValid(codeCurrency)) {
             JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), 400);
@@ -41,6 +41,7 @@ public class CurrencyServlet extends HttpServlet {
         } catch (CurrencyNotFoundException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }
