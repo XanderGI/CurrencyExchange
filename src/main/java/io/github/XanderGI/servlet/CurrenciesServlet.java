@@ -44,6 +44,7 @@ public class CurrenciesServlet extends BaseServlet {
 
         CurrencyRequestDto currencyDto = CurrencyMapper.toDto(name, code, sign);
         Currency currency = currencyService.addCurrency(currencyDto);
+
         JsonMapper.sendJson(resp, currency, 201);
     }
 }

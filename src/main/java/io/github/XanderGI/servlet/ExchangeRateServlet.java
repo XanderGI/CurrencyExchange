@@ -5,7 +5,6 @@ import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.CurrencyPair;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
-import io.github.XanderGI.exception.ExchangeRateNotFoundException;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
 import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.service.ExchangeRateService;
@@ -13,7 +12,6 @@ import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -23,66 +21,37 @@ import java.util.Map;
 import static io.github.XanderGI.utils.RequestUtils.getBodyParams;
 
 @WebServlet("/exchangeRate/*")
-public class ExchangeRateServlet extends HttpServlet {
+public class ExchangeRateServlet extends BaseServlet {
     private final ExchangeRateService exchangeRateService = new ExchangeRateService(new ExchangeRateDao(), new CurrencyDao());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
 
-        try {
-            CurrencyPair currencyPair = extractCurrencies(path);
-            ExchangeRate exchangeRate = exchangeRateService.getExchangeRateByCode(
-                    currencyPair.base(), currencyPair.target());
-            JsonMapper.sendJson(resp, exchangeRate, 200);
-        } catch (IllegalArgumentException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 400);
-        } catch (ExchangeRateNotFoundException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
-        }
-    }
+        CurrencyPair currencyPair = extractCurrencies(path);
+        ExchangeRate exchangeRate = exchangeRateService.getExchangeRateByCode(
+                currencyPair.base(), currencyPair.target());
 
-    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getPathInfo();
-
-        try {
-            CurrencyPair currencyPair = extractCurrencies(path);
-            Map<String, String> bodyParams = getBodyParams(req);
-            String rateValue = bodyParams.get("rate");
-
-            if (rateValue == null || rateValue.isEmpty()) {
-                JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
-                return;
-            }
-
-            ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(
-                    currencyPair.base(), currencyPair.target(), rateValue);
-            ExchangeRate exchangeRate = exchangeRateService.updateExchangeRate(exchangeRateRequestDto);
-            JsonMapper.sendJson(resp, exchangeRate, 200);
-        } catch (NumberFormatException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Invalid format number"), 400);
-        } catch (IllegalArgumentException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 400);
-        } catch (ExchangeRateNotFoundException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
-        }
+        JsonMapper.sendJson(resp, exchangeRate, 200);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String method = req.getMethod();
-        if (!method.equals("PATCH")) {
-            super.service(req, resp);
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo();
+        CurrencyPair currencyPair = extractCurrencies(path);
+        Map<String, String> bodyParams = getBodyParams(req);
+        String rateValue = bodyParams.get("rate");
+
+        if (rateValue == null || rateValue.isEmpty()) {
+            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
             return;
         }
 
-        this.doPatch(req, resp);
+        ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(
+                currencyPair.base(), currencyPair.target(), rateValue);
+        ExchangeRate exchangeRate = exchangeRateService.updateExchangeRate(exchangeRateRequestDto);
+
+        JsonMapper.sendJson(resp, exchangeRate, 200);
     }
 
     private CurrencyPair extractCurrencies(String path) {

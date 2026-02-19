@@ -15,6 +15,13 @@ public class BaseServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            String method = req.getMethod();
+
+            if (method.equals("PATCH")) {
+                this.doPatch(req, resp);
+                return;
+            }
+
             super.service(req, resp);
         } catch (NumberFormatException e) {
             JsonMapper.sendJson(resp, new ErrorResponse("Invalid format number"), 400);
@@ -28,6 +35,10 @@ public class BaseServlet extends HttpServlet {
             e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
+
+    }
+
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
     }
 }

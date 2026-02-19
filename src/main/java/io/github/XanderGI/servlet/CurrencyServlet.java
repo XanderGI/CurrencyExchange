@@ -8,14 +8,13 @@ import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
 @WebServlet("/currency/*")
-public class CurrencyServlet extends HttpServlet {
+public class CurrencyServlet extends BaseServlet {
     private final CurrencyService currencyService = new CurrencyService(new CurrencyDao());
 
     @Override
@@ -35,6 +34,7 @@ public class CurrencyServlet extends HttpServlet {
         }
 
         Currency currency = currencyService.getCurrencyByCode(codeCurrency);
+
         JsonMapper.sendJson(resp, currency, 200);
     }
 }
