@@ -10,14 +10,6 @@ import java.math.BigDecimal;
 
 public class ExchangeRateMapper {
 
-    public static ExchangeRateRequestDto toRequestDto(HttpServletRequest req) {
-        return new ExchangeRateRequestDto(
-                req.getParameter("baseCurrencyCode"),
-                req.getParameter("targetCurrencyCode"),
-                new BigDecimal(req.getParameter("rate"))
-        );
-    }
-
     public static ExchangeRateRequestDto toRequestDto(String baseCode, String targetCode, String rate) {
         return new ExchangeRateRequestDto(
                 baseCode,

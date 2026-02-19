@@ -22,7 +22,7 @@ Content-Type: application/x-www-form-urlencoded
 
 baseCurrencyCode=USD&targetCurrencyCode=EUR
 
-### Ошибка: некорретный код валюты в запросе (400):
+### Ошибка: некорретный код валюты в теле запроса (400):
 POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded
 

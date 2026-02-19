@@ -30,6 +30,7 @@ public class ExchangeRatesServlet extends HttpServlet {
             List<ExchangeRate> exchangeRates = exchangeRateService.getAllExchangeRates();
             JsonMapper.sendJson(resp, exchangeRates, 200);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }
@@ -41,13 +42,17 @@ public class ExchangeRatesServlet extends HttpServlet {
             return;
         }
 
-        if (!ValidationUtils.areCodesValid(req, "baseCurrencyCode", "targetCurrencyCode")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), 400);
+        String baseCode = req.getParameter("baseCurrencyCode").toUpperCase();
+        String targetCode = req.getParameter("targetCurrencyCode").toUpperCase();
+        String rate = req.getParameter("rate");
+
+        if (!ValidationUtils.isCodeValid(baseCode) || !ValidationUtils.isCodeValid(targetCode)) {
+            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the body"), 400);
             return;
         }
 
         try {
-            ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(req);
+            ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(baseCode, targetCode, rate);
             ExchangeRate exchangeRate = exchangeRateService.addExchangeRate(exchangeRateRequestDto);
             JsonMapper.sendJson(resp, exchangeRate, 201);
         } catch (NumberFormatException e) {
@@ -59,6 +64,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         } catch (ExchangeRateAlreadyExistsException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 409);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }
