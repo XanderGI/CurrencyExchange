@@ -1,5 +1,12 @@
 package io.github.XanderGI.listener;
 
+import io.github.XanderGI.dao.CurrencyDao;
+import io.github.XanderGI.dao.ExchangeRateDao;
+import io.github.XanderGI.model.Currency;
+import io.github.XanderGI.model.ExchangeRate;
+import io.github.XanderGI.service.CurrencyService;
+import io.github.XanderGI.service.ExchangeRateService;
+import io.github.XanderGI.service.ExchangeService;
 import io.github.XanderGI.utils.DatabaseManager;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -13,6 +20,17 @@ public class ContextListener implements ServletContextListener {
         Flyway.configure().dataSource("jdbc:sqlite:currencyExchange.db", "","").load().migrate();
         System.out.println("Flyway migration completed successfully!");
         DatabaseManager.init();
+
+        CurrencyDao currencyDao = new CurrencyDao();
+        ExchangeRateDao exchangeRateDao = new ExchangeRateDao();
+
+        CurrencyService currencyService = new CurrencyService(currencyDao);
+        ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, currencyDao);
+        ExchangeService exchangeService = new ExchangeService(exchangeRateDao);
+
+        sce.getServletContext().setAttribute("currencyService", currencyService);
+        sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
+        sce.getServletContext().setAttribute("exchangeService", exchangeService);
     }
 
     @Override

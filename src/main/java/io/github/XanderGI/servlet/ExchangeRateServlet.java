@@ -1,7 +1,5 @@
 package io.github.XanderGI.servlet;
 
-import io.github.XanderGI.dao.CurrencyDao;
-import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.CurrencyPair;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
@@ -22,7 +20,12 @@ import static io.github.XanderGI.utils.RequestUtils.getBodyParams;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends BaseServlet {
-    private final ExchangeRateService exchangeRateService = new ExchangeRateService(new ExchangeRateDao(), new CurrencyDao());
+    private ExchangeRateService exchangeRateService;
+
+    @Override
+    public void init() {
+        exchangeRateService = (ExchangeRateService) getServletContext().getAttribute("exchangeRateService");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

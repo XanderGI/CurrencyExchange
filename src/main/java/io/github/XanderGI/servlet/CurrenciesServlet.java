@@ -1,6 +1,5 @@
 package io.github.XanderGI.servlet;
 
-import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dto.CurrencyRequestDto;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.mapper.CurrencyMapper;
@@ -18,7 +17,12 @@ import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends BaseServlet {
-    private final CurrencyService currencyService = new CurrencyService(new CurrencyDao());
+    private CurrencyService currencyService;
+
+    @Override
+    public void init() {
+        currencyService = (CurrencyService) getServletContext().getAttribute("currencyService");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

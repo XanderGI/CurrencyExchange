@@ -1,6 +1,5 @@
 package io.github.XanderGI.servlet;
 
-import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
@@ -17,7 +16,12 @@ import java.io.IOException;
 
 @WebServlet("/exchange")
 public class ExchangeServlet extends BaseServlet {
-    private final ExchangeService exchangeService = new ExchangeService(new ExchangeRateDao());
+    private ExchangeService exchangeService;
+
+    @Override
+    public void init() {
+        exchangeService = (ExchangeService) getServletContext().getAttribute("exchangeService");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
