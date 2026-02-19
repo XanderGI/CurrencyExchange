@@ -10,7 +10,6 @@ import io.github.XanderGI.mapper.ExchangeRateMapper;
 import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.service.ExchangeRateService;
 import io.github.XanderGI.utils.JsonMapper;
-import io.github.XanderGI.utils.RequestUtils;
 import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,9 +17,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Map;
+
+import static io.github.XanderGI.utils.RequestUtils.getBodyParams;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
@@ -37,10 +37,10 @@ public class ExchangeRateServlet extends HttpServlet {
             JsonMapper.sendJson(resp, exchangeRate, 200);
         } catch (IllegalArgumentException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 400);
-        }
-        catch (ExchangeRateNotFoundException e) {
+        } catch (ExchangeRateNotFoundException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }
@@ -69,6 +69,7 @@ public class ExchangeRateServlet extends HttpServlet {
         } catch (ExchangeRateNotFoundException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }
@@ -84,20 +85,9 @@ public class ExchangeRateServlet extends HttpServlet {
         this.doPatch(req, resp);
     }
 
-    private Map<String, String> getBodyParams(HttpServletRequest req) throws IOException {
-        StringBuilder parameters = new StringBuilder();
-        try (BufferedReader reader = req.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                parameters.append(line);
-            }
-            return RequestUtils.parseBodyParams(parameters.toString());
-        }
-    }
-
     private CurrencyPair extractCurrencies(String path) {
         if (path == null || path.length() != 7) {
-           throw new IllegalArgumentException("Currency codes of the exchangeRate are missing in the address");
+            throw new IllegalArgumentException("Currency codes of the exchangeRate are missing in the address");
         }
 
         path = path.toUpperCase();

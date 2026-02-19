@@ -1,5 +1,9 @@
 package io.github.XanderGI.utils;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -9,6 +13,17 @@ public final class RequestUtils {
 
     private RequestUtils() {
 
+    }
+
+    public static Map<String, String> getBodyParams(HttpServletRequest req) throws IOException {
+        StringBuilder parameters = new StringBuilder();
+        try (BufferedReader reader = req.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                parameters.append(line);
+            }
+            return RequestUtils.parseBodyParams(parameters.toString());
+        }
     }
 
     public static Map<String, String> parseBodyParams(String body) {
