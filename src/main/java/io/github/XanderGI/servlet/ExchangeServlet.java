@@ -4,21 +4,19 @@ import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
-import io.github.XanderGI.exception.ExchangeRateNotFoundException;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
 import io.github.XanderGI.service.ExchangeService;
 import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
 @WebServlet("/exchange")
-public class ExchangeServlet extends HttpServlet {
+public class ExchangeServlet extends BaseServlet {
     private final ExchangeService exchangeService = new ExchangeService(new ExchangeRateDao());
 
     @Override
@@ -37,19 +35,9 @@ public class ExchangeServlet extends HttpServlet {
             return;
         }
 
-        try {
-            ExchangeRateRequestConvertDto reqDto = ExchangeRateMapper.toConvertDto(from, to, amount);
-            ExchangeRateResponseConvertDto respDto = exchangeService.convertCurrency(reqDto);
-            JsonMapper.sendJson(resp, respDto, 200);
-        } catch (NumberFormatException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Invalid format number"), 400);
-        } catch (IllegalArgumentException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 400);
-        } catch (ExchangeRateNotFoundException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
-        }
+        ExchangeRateRequestConvertDto reqDto = ExchangeRateMapper.toConvertDto(from, to, amount);
+        ExchangeRateResponseConvertDto respDto = exchangeService.convertCurrency(reqDto);
+
+        JsonMapper.sendJson(resp, respDto, 200);
     }
 }
