@@ -4,7 +4,6 @@ import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
 import io.github.XanderGI.model.Currency;
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
 
@@ -18,11 +17,11 @@ public class ExchangeRateMapper {
         );
     }
 
-    public static ExchangeRateRequestConvertDto toConvertDto(HttpServletRequest req) {
+    public static ExchangeRateRequestConvertDto toConvertDto(String from, String to, String amount) {
         return new ExchangeRateRequestConvertDto(
-                req.getParameter("from"),
-                req.getParameter("to"),
-                new BigDecimal(req.getParameter("amount"))
+                from,
+                to,
+                new BigDecimal(amount)
         );
     }
 

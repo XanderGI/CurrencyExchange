@@ -20,16 +20,6 @@ public final class ValidationUtils {
         return true;
     }
 
-    public static boolean areCodesValid(HttpServletRequest req, String... requiredFields) {
-        for (String field : requiredFields) {
-            String code = req.getParameter(field);
-            if (!isCodeValid(code)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static boolean isCodeValid(String code) {
         if (code == null || code.length() != 3) {
             return false;

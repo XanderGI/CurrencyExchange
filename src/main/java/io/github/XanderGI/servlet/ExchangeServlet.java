@@ -28,13 +28,17 @@ public class ExchangeServlet extends HttpServlet {
             return;
         }
 
-        if (!ValidationUtils.areCodesValid(req, "to", "from")) {
+        String from = req.getParameter("from").toUpperCase();
+        String to = req.getParameter("to").toUpperCase();
+        String amount = req.getParameter("amount");
+
+        if (!ValidationUtils.isCodeValid(from) || !ValidationUtils.isCodeValid(to)) {
             JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), 400);
             return;
         }
 
         try {
-            ExchangeRateRequestConvertDto reqDto = ExchangeRateMapper.toConvertDto(req);
+            ExchangeRateRequestConvertDto reqDto = ExchangeRateMapper.toConvertDto(from, to, amount);
             ExchangeRateResponseConvertDto respDto = exchangeService.convertCurrency(reqDto);
             JsonMapper.sendJson(resp, respDto, 200);
         } catch (NumberFormatException e) {
@@ -44,6 +48,7 @@ public class ExchangeServlet extends HttpServlet {
         } catch (ExchangeRateNotFoundException e) {
             JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
         } catch (Exception e) {
+            e.printStackTrace();
             JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
         }
     }
