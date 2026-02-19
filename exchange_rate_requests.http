@@ -10,6 +10,15 @@ GET http://localhost:8080/exchangeRate/RUBUAH
 ### Проверка отсутсвия валидного кода запроса (400):
 GET http://localhost:8080/exchangeRate/XANDERGI
 
+### Проверка отсутсвия валидного кода запроса (400):
+GET http://localhost:8080/exchangeRate/X1NDE4
+
+### Проверка отсутсвия валидного кода запроса (400):
+GET http://localhost:8080/exchangeRate
+
+### Проверка отсутсвия валидного кода запроса (400):
+GET http://localhost:8080/exchangeRate/null
+
 ### Успешное добавние обменной пары (201):
 POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded

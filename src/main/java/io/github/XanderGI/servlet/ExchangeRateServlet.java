@@ -86,8 +86,12 @@ public class ExchangeRateServlet extends HttpServlet {
     }
 
     private CurrencyPair extractCurrencies(String path) {
-        if (path == null || path.length() != 7) {
+        if (path == null || path.equals("/")) {
             throw new IllegalArgumentException("Currency codes of the exchangeRate are missing in the address");
+        }
+
+        if (path.length() != 7) {
+            throw new IllegalArgumentException("Currency codes of the exchangeRate are incorrect in the address");
         }
 
         path = path.toUpperCase();
