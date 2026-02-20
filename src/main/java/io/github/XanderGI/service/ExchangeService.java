@@ -26,13 +26,13 @@ public class ExchangeService {
         validate(dto);
 
         List<ExchangeRate> exchangeRates = exchangeRateDao.findAllUsdRelatedPairs(
-                dto.getBaseCurrencyCode(),
-                dto.getTargetCurrencyCode()
+                dto.baseCurrencyCode(),
+                dto.targetCurrencyCode()
         );
 
-        String currencyCodeFrom = dto.getBaseCurrencyCode();
-        String currencyCodeTo = dto.getTargetCurrencyCode();
-        BigDecimal amount = dto.getAmount();
+        String currencyCodeFrom = dto.baseCurrencyCode();
+        String currencyCodeTo = dto.targetCurrencyCode();
+        BigDecimal amount = dto.amount();
 
 
         return convertDirect(currencyCodeFrom, currencyCodeTo, amount, exchangeRates)

@@ -34,15 +34,15 @@ public class ExchangeRateService {
     public ExchangeRate addExchangeRate(ExchangeRateRequestDto dto) {
         validate(dto);
 
-        Currency baseCurrency = currencyDao.findByCode(dto.getBaseCurrencyCode())
+        Currency baseCurrency = currencyDao.findByCode(dto.baseCurrencyCode())
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
-        Currency targetCurrency = currencyDao.findByCode(dto.getTargetCurrencyCode())
+        Currency targetCurrency = currencyDao.findByCode(dto.targetCurrencyCode())
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
 
         ExchangeRate exchangeRate = new ExchangeRate(
                 baseCurrency,
                 targetCurrency,
-                dto.getRate()
+                dto.rate()
         );
 
         return exchangeRateDao.save(exchangeRate)
@@ -53,10 +53,10 @@ public class ExchangeRateService {
         validate(dto);
 
         ExchangeRate exchangeRate = getExchangeRateByCode(
-                dto.getBaseCurrencyCode(),
-                dto.getTargetCurrencyCode()
+                dto.baseCurrencyCode(),
+                dto.targetCurrencyCode()
         );
-        exchangeRate.setRate(dto.getRate());
+        exchangeRate.setRate(dto.rate());
 
         return exchangeRateDao.update(exchangeRate)
                 .orElseThrow(() -> new ExchangeRateNotFoundException("ExchangeRate not found"));

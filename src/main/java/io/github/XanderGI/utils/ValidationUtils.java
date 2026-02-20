@@ -34,17 +34,17 @@ public final class ValidationUtils {
     }
 
     public static void validate(ExchangeRateRequestDto dto) {
-        checkCurrencyCodesAreDifferent(dto.getBaseCurrencyCode(), dto.getTargetCurrencyCode());
+        checkCurrencyCodesAreDifferent(dto.baseCurrencyCode(), dto.targetCurrencyCode());
 
-        if (dto.getRate().signum() <= 0) {
+        if (dto.rate().signum() <= 0) {
             throw new IllegalArgumentException("The rate value must be positive");
         }
     }
 
     public static void validate(ExchangeRateRequestConvertDto dto) {
-        checkCurrencyCodesAreDifferent(dto.getBaseCurrencyCode(), dto.getTargetCurrencyCode());
+        checkCurrencyCodesAreDifferent(dto.baseCurrencyCode(), dto.targetCurrencyCode());
 
-        if (dto.getAmount().signum() <= 0) {
+        if (dto.amount().signum() <= 0) {
             throw new IllegalArgumentException("The amount value must be positive");
         }
     }

@@ -7,7 +7,6 @@ import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,13 +24,13 @@ public class CurrenciesServlet extends BaseServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<Currency> currencies = currencyService.getAllCurrencies();
         JsonMapper.sendJson(resp, currencies, 200);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!ValidationUtils.hasRequiredFields(req, "name", "code", "sign")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
             return;

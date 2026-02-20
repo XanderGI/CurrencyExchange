@@ -1,7 +1,5 @@
 package io.github.XanderGI.servlet;
 
-import io.github.XanderGI.dao.CurrencyDao;
-import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
@@ -9,8 +7,6 @@ import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.service.ExchangeRateService;
 import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,13 +24,13 @@ public class ExchangeRatesServlet extends BaseServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<ExchangeRate> exchangeRates = exchangeRateService.getAllExchangeRates();
         JsonMapper.sendJson(resp, exchangeRates, 200);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!ValidationUtils.hasRequiredFields(req, "baseCurrencyCode", "targetCurrencyCode", "rate")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
             return;

@@ -14,9 +14,9 @@ public class CurrencyMapper {
 
     public static Currency toModel(CurrencyRequestDto currencyRequestDto) {
         return new Currency(
-                currencyRequestDto.getName(),
-                currencyRequestDto.getCode(),
-                currencyRequestDto.getSign()
+                currencyRequestDto.name(),
+                currencyRequestDto.code(),
+                currencyRequestDto.sign()
         );
     }
 }

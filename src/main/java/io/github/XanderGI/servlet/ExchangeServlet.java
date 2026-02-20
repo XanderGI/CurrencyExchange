@@ -7,7 +7,6 @@ import io.github.XanderGI.mapper.ExchangeRateMapper;
 import io.github.XanderGI.service.ExchangeService;
 import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +23,7 @@ public class ExchangeServlet extends BaseServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!ValidationUtils.hasRequiredFields(req, "to", "from", "amount")) {
             JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
             return;

@@ -8,7 +8,6 @@ import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.service.ExchangeRateService;
 import io.github.XanderGI.utils.JsonMapper;
 import io.github.XanderGI.utils.ValidationUtils;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,7 +27,7 @@ public class ExchangeRateServlet extends BaseServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = req.getPathInfo();
 
         CurrencyPair currencyPair = extractCurrencies(path);
@@ -39,7 +38,7 @@ public class ExchangeRateServlet extends BaseServlet {
     }
 
     @Override
-    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = req.getPathInfo();
         CurrencyPair currencyPair = extractCurrencies(path);
         Map<String, String> bodyParams = getBodyParams(req);

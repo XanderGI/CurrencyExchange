@@ -6,7 +6,6 @@ import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.model.ExchangeRate;
-import io.github.XanderGI.service.ExchangeRateService;
 import io.github.XanderGI.service.ExchangeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +63,6 @@ public class ExchangeRateServiceTest {
         ExchangeRateResponseConvertDto respDto = service.convertCurrency(reqDto);
 
         assertNotNull(respDto);
-        assertEquals(0, new BigDecimal("5").compareTo(respDto.getConvertedAmount()));
+        assertEquals(0, new BigDecimal("5").compareTo(respDto.convertedAmount()));
     }
 }
