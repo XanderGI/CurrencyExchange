@@ -2,8 +2,8 @@ package io.github.XanderGI.listener;
 
 import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dao.ExchangeRateDao;
-import io.github.XanderGI.model.Currency;
-import io.github.XanderGI.model.ExchangeRate;
+import io.github.XanderGI.dao.impl.CurrencyDaoImpl;
+import io.github.XanderGI.dao.impl.ExchangeRateDaoImpl;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.service.ExchangeRateService;
 import io.github.XanderGI.service.ExchangeService;
@@ -21,8 +21,8 @@ public class ContextListener implements ServletContextListener {
         System.out.println("Flyway migration completed successfully!");
         DatabaseManager.init();
 
-        CurrencyDao currencyDao = new CurrencyDao();
-        ExchangeRateDao exchangeRateDao = new ExchangeRateDao();
+        CurrencyDao currencyDao = new CurrencyDaoImpl();
+        ExchangeRateDao exchangeRateDao = new ExchangeRateDaoImpl();
 
         CurrencyService currencyService = new CurrencyService(currencyDao);
         ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, currencyDao);

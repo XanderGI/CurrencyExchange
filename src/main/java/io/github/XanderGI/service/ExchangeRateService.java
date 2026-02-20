@@ -17,8 +17,8 @@ public class ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao;
     private final CurrencyDao currencyDao;
 
-    public ExchangeRateService(ExchangeRateDao exchangeRateDao, CurrencyDao currencyDao) {
-        this.exchangeRateDao = exchangeRateDao;
+    public ExchangeRateService(ExchangeRateDao ExchangeRateDao, CurrencyDao currencyDao) {
+        this.exchangeRateDao = ExchangeRateDao;
         this.currencyDao = currencyDao;
     }
 

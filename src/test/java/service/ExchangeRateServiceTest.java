@@ -1,7 +1,7 @@
 package service;
 
-import io.github.XanderGI.dao.CurrencyDao;
-import io.github.XanderGI.dao.ExchangeRateDao;
+import io.github.XanderGI.dao.impl.CurrencyDaoImpl;
+import io.github.XanderGI.dao.impl.ExchangeRateDaoImpl;
 import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
 import io.github.XanderGI.model.Currency;
@@ -24,10 +24,10 @@ import static org.mockito.Mockito.when;
 public class ExchangeRateServiceTest {
 
     @Mock
-    private ExchangeRateDao exchangeRateDao;
+    private ExchangeRateDaoImpl exchangeRateDaoImpl;
 
     @Mock
-    private CurrencyDao currencyDao;
+    private CurrencyDaoImpl currencyDaoImpl;
 
     @InjectMocks
     private ExchangeService service;
@@ -58,7 +58,7 @@ public class ExchangeRateServiceTest {
 
         List<ExchangeRate> exchangeRates = List.of(fromRubToUsdRate, fromUsdToEurRate);
 
-        when(exchangeRateDao.findAllUsdRelatedPairs(base, target)).thenReturn(exchangeRates);
+        when(exchangeRateDaoImpl.findAllUsdRelatedPairs(base, target)).thenReturn(exchangeRates);
 
         ExchangeRateResponseConvertDto respDto = service.convertCurrency(reqDto);
 
