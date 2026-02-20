@@ -4,6 +4,7 @@ import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dao.impl.CurrencyDaoImpl;
 import io.github.XanderGI.dao.impl.ExchangeRateDaoImpl;
+import io.github.XanderGI.mapper.CurrencyMapper;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.service.ExchangeRateService;
 import io.github.XanderGI.service.ExchangeService;
@@ -23,14 +24,16 @@ public class ContextListener implements ServletContextListener {
 
         CurrencyDao currencyDao = new CurrencyDaoImpl();
         ExchangeRateDao exchangeRateDao = new ExchangeRateDaoImpl();
+        CurrencyMapper currencyMapper = CurrencyMapper.INSTANCE;
 
-        CurrencyService currencyService = new CurrencyService(currencyDao);
+        CurrencyService currencyService = new CurrencyService(currencyDao, currencyMapper);
         ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, currencyDao);
         ExchangeService exchangeService = new ExchangeService(exchangeRateDao);
 
         sce.getServletContext().setAttribute("currencyService", currencyService);
         sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
         sce.getServletContext().setAttribute("exchangeService", exchangeService);
+        sce.getServletContext().setAttribute("currencyMapper", currencyMapper);
     }
 
     @Override

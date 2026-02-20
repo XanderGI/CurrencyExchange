@@ -22,6 +22,10 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.50.3.0")
     // Source: https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     implementation("com.zaxxer:HikariCP:5.1.0")
+    // Source: https://mvnrepository.com/artifact/org.mapstruct/mapstruct
+    implementation("org.mapstruct:mapstruct:1.6.3")
+    // Source: https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
     // Source: https://mvnrepository.com/artifact/org.mockito/mockito-core
     testImplementation("org.mockito:mockito-core:5.18.0")
     // Source: https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter

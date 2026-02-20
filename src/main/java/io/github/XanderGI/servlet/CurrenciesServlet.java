@@ -17,10 +17,12 @@ import java.util.List;
 @WebServlet("/currencies")
 public class CurrenciesServlet extends BaseServlet {
     private CurrencyService currencyService;
+    private CurrencyMapper mapper;
 
     @Override
     public void init() {
         currencyService = (CurrencyService) getServletContext().getAttribute("currencyService");
+        mapper = (CurrencyMapper) getServletContext().getAttribute("currencyMapper");
     }
 
     @Override
@@ -45,7 +47,7 @@ public class CurrenciesServlet extends BaseServlet {
             return;
         }
 
-        CurrencyRequestDto currencyDto = CurrencyMapper.toDto(name, code, sign);
+        CurrencyRequestDto currencyDto = mapper.toCurrencyRequest(name, code, sign);
         Currency currency = currencyService.addCurrency(currencyDto);
 
         JsonMapper.sendJson(resp, currency, 201);

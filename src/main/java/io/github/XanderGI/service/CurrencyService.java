@@ -11,9 +11,11 @@ import java.util.List;
 
 public class CurrencyService {
     private final CurrencyDao currencyDao;
+    private final CurrencyMapper mapper;
 
-    public CurrencyService(CurrencyDao currencyDao) {
+    public CurrencyService(CurrencyDao currencyDao, CurrencyMapper currencyMapper) {
         this.currencyDao = currencyDao;
+        this.mapper = currencyMapper;
     }
 
     public List<Currency> getAllCurrencies() {
@@ -26,7 +28,7 @@ public class CurrencyService {
     }
 
     public Currency addCurrency(CurrencyRequestDto dto) {
-        Currency currency = CurrencyMapper.toModel(dto);
+        Currency currency = mapper.toCurrencyModel(dto);
         return currencyDao.save(currency)
                 .orElseThrow(() -> new CurrencyAlreadyExistsException("Currency already exists"));
     }

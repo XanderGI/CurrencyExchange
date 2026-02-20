@@ -18,10 +18,6 @@ public class Currency {
         this.sign = sign;
     }
 
-    public Currency(String fullName, String code, String sign) {
-        this(null, fullName, code, sign);
-    }
-
     public Long getId() {
         return id;
     }

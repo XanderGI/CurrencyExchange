@@ -42,17 +42,17 @@ public class ExchangeRateServiceTest {
                 target,
                 amount
         );
-        Currency currencyUSD = new Currency("United States Dollar", "USD", "$");
+        Currency currencyUSD = new Currency(1L,"United States Dollar", "USD", "$");
 
         ExchangeRate fromRubToUsdRate = new ExchangeRate(
                 currencyUSD,
-                new Currency("Russian Ruble", "RUB", "₽"),
+                new Currency(2L,"Russian Ruble", "RUB", "₽"),
                 new BigDecimal("100")
         );
 
         ExchangeRate fromUsdToEurRate = new ExchangeRate(
                 currencyUSD,
-                new Currency("Euro", "EUR", "€"),
+                new Currency(3L,"Euro", "EUR", "€"),
                 new BigDecimal("0.5")
         );
 
