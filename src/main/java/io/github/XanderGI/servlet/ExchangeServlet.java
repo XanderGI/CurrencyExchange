@@ -16,10 +16,12 @@ import java.io.IOException;
 @WebServlet("/exchange")
 public class ExchangeServlet extends BaseServlet {
     private ExchangeService exchangeService;
+    private ExchangeRateMapper mapper;
 
     @Override
     public void init() {
         exchangeService = (ExchangeService) getServletContext().getAttribute("exchangeService");
+        mapper = (ExchangeRateMapper) getServletContext().getAttribute("exchangeRateMapper");
     }
 
     @Override
@@ -38,7 +40,7 @@ public class ExchangeServlet extends BaseServlet {
             return;
         }
 
-        ExchangeRateRequestConvertDto reqDto = ExchangeRateMapper.toConvertDto(from, to, amount);
+        ExchangeRateRequestConvertDto reqDto = mapper.toConvertDto(from, to, amount);
         ExchangeRateResponseConvertDto respDto = exchangeService.convertCurrency(reqDto);
 
         JsonMapper.sendJson(resp, respDto, 200);

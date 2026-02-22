@@ -1,6 +1,5 @@
 package service;
 
-import io.github.XanderGI.dao.impl.CurrencyDaoImpl;
 import io.github.XanderGI.dao.impl.ExchangeRateDaoImpl;
 import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
@@ -26,9 +25,6 @@ public class ExchangeRateServiceTest {
     @Mock
     private ExchangeRateDaoImpl exchangeRateDaoImpl;
 
-    @Mock
-    private CurrencyDaoImpl currencyDaoImpl;
-
     @InjectMocks
     private ExchangeService service;
 
@@ -42,17 +38,19 @@ public class ExchangeRateServiceTest {
                 target,
                 amount
         );
-        Currency currencyUSD = new Currency(1L,"United States Dollar", "USD", "$");
+        Currency currencyUSD = new Currency(1L, "United States Dollar", "USD", "$");
 
         ExchangeRate fromRubToUsdRate = new ExchangeRate(
+                1L,
                 currencyUSD,
-                new Currency(2L,"Russian Ruble", "RUB", "₽"),
+                new Currency(2L, "Russian Ruble", "RUB", "₽"),
                 new BigDecimal("100")
         );
 
         ExchangeRate fromUsdToEurRate = new ExchangeRate(
+                2L,
                 currencyUSD,
-                new Currency(3L,"Euro", "EUR", "€"),
+                new Currency(3L, "Euro", "EUR", "€"),
                 new BigDecimal("0.5")
         );
 

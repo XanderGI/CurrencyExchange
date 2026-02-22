@@ -17,9 +17,11 @@ import static io.github.XanderGI.utils.ValidationUtils.validate;
 
 public class ExchangeService {
     private final ExchangeRateDao exchangeRateDao;
+    private final ExchangeRateMapper mapper;
 
-    public ExchangeService(ExchangeRateDao exchangeRateDao) {
+    public ExchangeService(ExchangeRateDao exchangeRateDao, ExchangeRateMapper exchangeRateMapper) {
         this.exchangeRateDao = exchangeRateDao;
+        this.mapper = exchangeRateMapper;
     }
 
     public ExchangeRateResponseConvertDto convertCurrency(ExchangeRateRequestConvertDto dto) {
@@ -51,7 +53,7 @@ public class ExchangeService {
                     BigDecimal rate = exRate.getRate().setScale(6, RoundingMode.HALF_EVEN);
                     BigDecimal convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
 
-                    return ExchangeRateMapper.toResponseDto(
+                    return mapper.toResponseDto(
                             exRate.getBaseCurrency(),
                             exRate.getTargetCurrency(),
                             rate,
@@ -69,7 +71,7 @@ public class ExchangeService {
                     BigDecimal rate = BigDecimal.ONE.divide(exRate.getRate(), 6, RoundingMode.HALF_EVEN);
                     BigDecimal convertedAmount = rate.multiply(amount).setScale(2, RoundingMode.HALF_EVEN);
 
-                    return ExchangeRateMapper.toResponseDto(
+                    return mapper.toResponseDto(
                             exRate.getTargetCurrency(),
                             exRate.getBaseCurrency(),
                             rate,
@@ -91,7 +93,7 @@ public class ExchangeService {
                             BigDecimal rate = rateBaseToUsd.multiply(rateUsdToTarget).setScale(6, RoundingMode.HALF_EVEN);
                             BigDecimal convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
 
-                            return ExchangeRateMapper.toResponseDto(
+                            return mapper.toResponseDto(
                                     baseCurrency,
                                     targetCurrency,
                                     rate,

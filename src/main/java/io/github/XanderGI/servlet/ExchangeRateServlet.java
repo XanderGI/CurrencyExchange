@@ -20,10 +20,12 @@ import static io.github.XanderGI.utils.RequestUtils.getBodyParams;
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends BaseServlet {
     private ExchangeRateService exchangeRateService;
+    private ExchangeRateMapper mapper;
 
     @Override
     public void init() {
         exchangeRateService = (ExchangeRateService) getServletContext().getAttribute("exchangeRateService");
+        mapper = (ExchangeRateMapper) getServletContext().getAttribute("exchangeRateMapper");
     }
 
     @Override
@@ -49,7 +51,7 @@ public class ExchangeRateServlet extends BaseServlet {
             return;
         }
 
-        ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(
+        ExchangeRateRequestDto exchangeRateRequestDto = mapper.toRequestDto(
                 currencyPair.base(), currencyPair.target(), rateValue);
         ExchangeRate exchangeRate = exchangeRateService.updateExchangeRate(exchangeRateRequestDto);
 

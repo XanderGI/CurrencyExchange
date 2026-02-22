@@ -17,10 +17,12 @@ import java.util.List;
 @WebServlet("/exchangeRates")
 public class ExchangeRatesServlet extends BaseServlet {
     private ExchangeRateService exchangeRateService;
+    private ExchangeRateMapper mapper;
 
     @Override
     public void init() {
         exchangeRateService = (ExchangeRateService) getServletContext().getAttribute("exchangeRateService");
+        mapper = (ExchangeRateMapper) getServletContext().getAttribute("exchangeRateMapper");
     }
 
     @Override
@@ -45,7 +47,7 @@ public class ExchangeRatesServlet extends BaseServlet {
             return;
         }
 
-        ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateMapper.toRequestDto(baseCode, targetCode, rate);
+        ExchangeRateRequestDto exchangeRateRequestDto = mapper.toRequestDto(baseCode, targetCode, rate);
         ExchangeRate exchangeRate = exchangeRateService.addExchangeRate(exchangeRateRequestDto);
 
         JsonMapper.sendJson(resp, exchangeRate, 201);
