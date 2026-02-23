@@ -56,9 +56,9 @@ public class CurrencyDaoImpl implements CurrencyDao {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_SAVE_CURRENCY, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setString(1, currency.getCode());
-            preparedStatement.setString(2, currency.getFullName());
-            preparedStatement.setString(3, currency.getSign());
+            preparedStatement.setString(1, currency.code());
+            preparedStatement.setString(2, currency.fullName());
+            preparedStatement.setString(3, currency.sign());
             preparedStatement.executeUpdate();
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
@@ -66,9 +66,9 @@ public class CurrencyDaoImpl implements CurrencyDao {
             if (resultSet.next()) {
                 return Optional.of(new Currency(
                         resultSet.getLong(1),
-                        currency.getFullName(),
-                        currency.getCode(),
-                        currency.getSign()
+                        currency.fullName(),
+                        currency.code(),
+                        currency.sign()
                 ));
             }
         } catch (SQLException e) {

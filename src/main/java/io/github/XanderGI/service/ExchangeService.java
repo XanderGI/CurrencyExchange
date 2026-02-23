@@ -104,7 +104,7 @@ public class ExchangeService {
     }
 
     private BigDecimal calculateRate(ExchangeRate exchangeRate, boolean toUsd) {
-        boolean isBaseUsd = exchangeRate.getBaseCurrency().getCode().equals("USD");
+        boolean isBaseUsd = exchangeRate.getBaseCurrency().code().equals("USD");
         if (isBaseUsd == toUsd) {
             return BigDecimal.ONE.divide(exchangeRate.getRate(), 6, RoundingMode.HALF_UP);
         }
@@ -112,7 +112,7 @@ public class ExchangeService {
     }
 
     private Currency extractNonUsdCurrency(ExchangeRate exchangeRate) {
-        if (exchangeRate.getBaseCurrency().getCode().equals("USD")) {
+        if (exchangeRate.getBaseCurrency().code().equals("USD")) {
             return exchangeRate.getTargetCurrency();
         }
         return exchangeRate.getBaseCurrency();
@@ -125,12 +125,12 @@ public class ExchangeService {
     }
 
     private boolean isPair(ExchangeRate exchangeRate, String baseCode, String targetCode) {
-        return exchangeRate.getBaseCurrency().getCode().equals(baseCode) &&
-                exchangeRate.getTargetCurrency().getCode().equals(targetCode);
+        return exchangeRate.getBaseCurrency().code().equals(baseCode) &&
+                exchangeRate.getTargetCurrency().code().equals(targetCode);
     }
 
     private boolean containsCurrency(ExchangeRate exchangeRate, String code) {
-        return exchangeRate.getBaseCurrency().getCode().equals(code) ||
-                exchangeRate.getTargetCurrency().getCode().equals(code);
+        return exchangeRate.getBaseCurrency().code().equals(code) ||
+                exchangeRate.getTargetCurrency().code().equals(code);
     }
 }

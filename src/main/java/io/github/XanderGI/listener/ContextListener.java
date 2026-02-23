@@ -19,9 +19,9 @@ import org.flywaydb.core.Flyway;
 public class ContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        Flyway.configure().dataSource("jdbc:sqlite:currencyExchange.db", "","").load().migrate();
-        System.out.println("Flyway migration completed successfully!");
         DatabaseManager.init();
+        Flyway.configure().dataSource(DatabaseManager.getDataSource()).load().migrate();
+        System.out.println("Flyway migration completed successfully!");
 
         CurrencyDao currencyDao = new CurrencyDaoImpl();
         ExchangeRateDao exchangeRateDao = new ExchangeRateDaoImpl();

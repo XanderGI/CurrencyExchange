@@ -82,8 +82,8 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_SAVE_EXCHANGE_RATE, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setLong(1, exchangeRate.getBaseCurrency().getId());
-            preparedStatement.setLong(2, exchangeRate.getTargetCurrency().getId());
+            preparedStatement.setLong(1, exchangeRate.getBaseCurrency().id());
+            preparedStatement.setLong(2, exchangeRate.getTargetCurrency().id());
             preparedStatement.setBigDecimal(3, exchangeRate.getRate());
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();

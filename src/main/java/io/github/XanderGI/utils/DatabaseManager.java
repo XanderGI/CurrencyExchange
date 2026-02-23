@@ -3,6 +3,7 @@ package io.github.XanderGI.utils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -28,5 +29,9 @@ public final class DatabaseManager {
 
     public static Connection getConnection() throws SQLException {
         return dataSource.getConnection();
+    }
+
+    public static DataSource getDataSource() {
+        return dataSource;
     }
 }
