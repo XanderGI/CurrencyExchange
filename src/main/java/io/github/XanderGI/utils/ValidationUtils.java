@@ -33,6 +33,10 @@ public final class ValidationUtils {
         return true;
     }
 
+    public static boolean isSignValid(String sign) {
+        return sign != null && sign.length() <= 3;
+    }
+
     public static void validate(ExchangeRateRequestDto dto) {
         checkCurrencyCodesAreDifferent(dto.baseCurrencyCode(), dto.targetCurrencyCode());
 

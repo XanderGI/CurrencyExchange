@@ -21,7 +21,6 @@ public class ContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         DatabaseManager.init();
         Flyway.configure().dataSource(DatabaseManager.getDataSource()).load().migrate();
-        System.out.println("Flyway migration completed successfully!");
 
         CurrencyDao currencyDao = new CurrencyDaoImpl();
         ExchangeRateDao exchangeRateDao = new ExchangeRateDaoImpl();

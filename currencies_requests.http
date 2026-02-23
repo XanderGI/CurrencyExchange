@@ -33,3 +33,9 @@ POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
 name=Russian Ruble&code=RUB&sign=₽
+
+### Попытка добавить валюту с sign > 3 (400)
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=Sign&code=RIP&sign=META

@@ -47,6 +47,11 @@ public class CurrenciesServlet extends BaseServlet {
             return;
         }
 
+        if (!ValidationUtils.isSignValid(sign)) {
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency sign has an incorrect format"), 400);
+            return;
+        }
+
         CurrencyRequestDto currencyDto = mapper.toCurrencyRequest(name, code, sign);
         Currency currency = currencyService.addCurrency(currencyDto);
 

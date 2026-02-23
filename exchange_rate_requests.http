@@ -7,6 +7,9 @@ GET http://localhost:8080/exchangeRate/USDRUB
 ### Попытка получить несуществующий обменный курс (404):
 GET http://localhost:8080/exchangeRate/RUBUAH
 
+### Попытка получить несуществующий обменный курс (404):
+GET http://localhost:8080/exchangeRate/ZZZYYY
+
 ### Проверка отсутсвия валидного кода запроса (400):
 GET http://localhost:8080/exchangeRate/XANDERGI
 
@@ -15,6 +18,9 @@ GET http://localhost:8080/exchangeRate/X1NDE4
 
 ### Проверка отсутсвия валидного кода запроса (400):
 GET http://localhost:8080/exchangeRate
+
+### Проверка отсутсвия валидного кода запроса (400):
+GET http://localhost:8080/exchangeRate/
 
 ### Проверка отсутсвия валидного кода запроса (400):
 GET http://localhost:8080/exchangeRate/null
