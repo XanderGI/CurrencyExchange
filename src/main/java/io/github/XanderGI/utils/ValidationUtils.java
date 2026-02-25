@@ -13,7 +13,7 @@ public final class ValidationUtils {
     public static boolean hasRequiredFields(HttpServletRequest req, String... requiredFields) {
         for (String field : requiredFields) {
             String value = req.getParameter(field);
-            if (value == null || value.isEmpty()) {
+            if (value == null || value.isBlank()) {
                 return false;
             }
         }

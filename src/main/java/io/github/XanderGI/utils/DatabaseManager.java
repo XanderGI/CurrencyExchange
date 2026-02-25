@@ -33,6 +33,11 @@ public final class DatabaseManager {
             throw new RuntimeException(e);
         }
 
+        String envUrl = System.getenv("DB_URL");
+        if (envUrl != null) {
+            config.setJdbcUrl(envUrl);
+        }
+
         config.setMaximumPoolSize(20);
         dataSource = new HikariDataSource(config);
     }

@@ -39,3 +39,21 @@ POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
 name=Sign&code=RIP&sign=META
+
+### Попытка добавить валюту с пустым name (400)
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=  &code=BYC&sign=#
+
+### Попытка добавить валюту с пустым code (400)
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=ABC&code=   &sign=#
+
+### Попытка добавить валюту с пустым sign (400)
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=AC&code=DC &sign=
