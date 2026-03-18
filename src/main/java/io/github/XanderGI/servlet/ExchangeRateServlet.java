@@ -19,6 +19,9 @@ import static io.github.XanderGI.utils.RequestUtils.getBodyParams;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends BaseServlet {
+    private static final int LEADING_SLASH_OFFSET = 1;
+    private static final int CURRENCY_CODE_LENGTH = 3;
+    private static final int FULL_PATH_LENGTH = 1 + 2 * CURRENCY_CODE_LENGTH;
     private ExchangeRateService exchangeRateService;
     private ExchangeRateMapper mapper;
 
@@ -36,7 +39,7 @@ public class ExchangeRateServlet extends BaseServlet {
         ExchangeRate exchangeRate = exchangeRateService.getExchangeRateByCode(
                 currencyPair.base(), currencyPair.target());
 
-        JsonMapper.sendJson(resp, exchangeRate, 200);
+        JsonMapper.sendJson(resp, exchangeRate, HttpServletResponse.SC_OK);
     }
 
     @Override
@@ -47,7 +50,7 @@ public class ExchangeRateServlet extends BaseServlet {
         String rateValue = bodyParams.get("rate");
 
         if (rateValue == null || rateValue.isEmpty()) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -55,7 +58,7 @@ public class ExchangeRateServlet extends BaseServlet {
                 currencyPair.base(), currencyPair.target(), rateValue);
         ExchangeRate exchangeRate = exchangeRateService.updateExchangeRate(exchangeRateRequestDto);
 
-        JsonMapper.sendJson(resp, exchangeRate, 200);
+        JsonMapper.sendJson(resp, exchangeRate, HttpServletResponse.SC_OK);
     }
 
     private CurrencyPair extractCurrencies(String path) {
@@ -63,13 +66,14 @@ public class ExchangeRateServlet extends BaseServlet {
             throw new IllegalArgumentException("Currency codes of the exchangeRate are missing in the address");
         }
 
-        if (path.length() != 7) {
+        if (path.length() != FULL_PATH_LENGTH) {
             throw new IllegalArgumentException("Currency codes of the exchangeRate are incorrect in the address");
         }
+        int targetStart = LEADING_SLASH_OFFSET + CURRENCY_CODE_LENGTH;
 
         path = path.toUpperCase();
-        String baseCode = path.substring(1, 4);
-        String targetCode = path.substring(4, 7);
+        String baseCode = path.substring(LEADING_SLASH_OFFSET, targetStart);
+        String targetCode = path.substring(targetStart, targetStart + CURRENCY_CODE_LENGTH);
 
         if (!(ValidationUtils.isCodeValid(baseCode) && ValidationUtils.isCodeValid(targetCode))) {
             throw new IllegalArgumentException("Currency code has an incorrect format");

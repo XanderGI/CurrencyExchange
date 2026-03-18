@@ -24,21 +24,20 @@ public class BaseServlet extends HttpServlet {
 
             super.service(req, resp);
         } catch (NumberFormatException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Invalid format number"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("Invalid format number"), HttpServletResponse.SC_BAD_REQUEST);
         } catch (IllegalArgumentException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), HttpServletResponse.SC_BAD_REQUEST);
         } catch (ModelNotFoundException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 404);
+            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
         } catch (ModelAlreadyExistsException e) {
-            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), 409);
+            JsonMapper.sendJson(resp, new ErrorResponse(e.getMessage()), HttpServletResponse.SC_CONFLICT);
         } catch (Exception e) {
             e.printStackTrace();
-            JsonMapper.sendJson(resp, new ErrorResponse("Server error"), 500);
+            JsonMapper.sendJson(resp, new ErrorResponse("Server error"), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
     }
 
-    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
     }
 }

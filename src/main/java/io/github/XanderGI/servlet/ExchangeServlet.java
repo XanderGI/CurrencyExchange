@@ -27,7 +27,7 @@ public class ExchangeServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!ValidationUtils.hasRequiredFields(req, "to", "from", "amount")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -36,13 +36,13 @@ public class ExchangeServlet extends BaseServlet {
         String amount = req.getParameter("amount");
 
         if (!ValidationUtils.isCodeValid(from) || !ValidationUtils.isCodeValid(to)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         ExchangeRateRequestConvertDto reqDto = mapper.toConvertDto(from, to, amount);
         ExchangeRateResponseConvertDto respDto = exchangeService.convertCurrency(reqDto);
 
-        JsonMapper.sendJson(resp, respDto, 200);
+        JsonMapper.sendJson(resp, respDto, HttpServletResponse.SC_OK);
     }
 }

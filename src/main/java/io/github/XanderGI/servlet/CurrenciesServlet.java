@@ -28,13 +28,13 @@ public class CurrenciesServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<Currency> currencies = currencyService.getAllCurrencies();
-        JsonMapper.sendJson(resp, currencies, 200);
+        JsonMapper.sendJson(resp, currencies, HttpServletResponse.SC_OK);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!ValidationUtils.hasRequiredFields(req, "name", "code", "sign")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -43,18 +43,18 @@ public class CurrenciesServlet extends BaseServlet {
         String sign = req.getParameter("sign");
 
         if (!ValidationUtils.isCodeValid(code)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         if (!ValidationUtils.isSignValid(sign)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency sign has an incorrect format"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency sign has an incorrect format"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         CurrencyRequestDto currencyDto = mapper.toCurrencyRequest(name, code, sign);
         Currency currency = currencyService.addCurrency(currencyDto);
 
-        JsonMapper.sendJson(resp, currency, 201);
+        JsonMapper.sendJson(resp, currency, HttpServletResponse.SC_CREATED);
     }
 }

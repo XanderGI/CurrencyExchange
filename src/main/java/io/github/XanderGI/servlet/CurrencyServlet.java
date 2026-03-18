@@ -25,19 +25,19 @@ public class CurrencyServlet extends BaseServlet {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code is missing in URL"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency code is missing in URL"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         String codeCurrency = pathInfo.substring(1).toUpperCase();
 
         if (!ValidationUtils.isCodeValid(codeCurrency)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         Currency currency = currencyService.getCurrencyByCode(codeCurrency);
 
-        JsonMapper.sendJson(resp, currency, 200);
+        JsonMapper.sendJson(resp, currency, HttpServletResponse.SC_OK);
     }
 }

@@ -22,7 +22,6 @@ public final class JsonMapper {
     }
 
     public static void sendJson(HttpServletResponse resp, Object object, int status) throws IOException {
-        resp.setContentType("application/json");
         resp.setStatus(status);
         resp.getWriter().write(toJson(object));
     }

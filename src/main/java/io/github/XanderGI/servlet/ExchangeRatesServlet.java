@@ -28,13 +28,13 @@ public class ExchangeRatesServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<ExchangeRate> exchangeRates = exchangeRateService.getAllExchangeRates();
-        JsonMapper.sendJson(resp, exchangeRates, 200);
+        JsonMapper.sendJson(resp, exchangeRates, HttpServletResponse.SC_OK);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!ValidationUtils.hasRequiredFields(req, "baseCurrencyCode", "targetCurrencyCode", "rate")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -43,13 +43,13 @@ public class ExchangeRatesServlet extends BaseServlet {
         String rate = req.getParameter("rate");
 
         if (!ValidationUtils.isCodeValid(baseCode) || !ValidationUtils.isCodeValid(targetCode)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the body"), 400);
+            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the body"), HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         ExchangeRateRequestDto exchangeRateRequestDto = mapper.toRequestDto(baseCode, targetCode, rate);
         ExchangeRate exchangeRate = exchangeRateService.addExchangeRate(exchangeRateRequestDto);
 
-        JsonMapper.sendJson(resp, exchangeRate, 201);
+        JsonMapper.sendJson(resp, exchangeRate, HttpServletResponse.SC_CREATED);
     }
 }
