@@ -1,6 +1,5 @@
 package io.github.XanderGI.servlet;
 
-import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.utils.JsonMapper;
@@ -13,6 +12,7 @@ import java.io.IOException;
 
 @WebServlet("/currency/*")
 public class CurrencyServlet extends BaseServlet {
+    private static final int LEADING_SLASH_OFFSET = 1;
     private CurrencyService currencyService;
 
     @Override
@@ -25,15 +25,13 @@ public class CurrencyServlet extends BaseServlet {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code is missing in URL"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new IllegalArgumentException("Currency code is missing in URL");
         }
 
-        String codeCurrency = pathInfo.substring(1).toUpperCase();
+        String codeCurrency = pathInfo.substring(LEADING_SLASH_OFFSET).toUpperCase();
 
         if (!ValidationUtils.isCodeValid(codeCurrency)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new IllegalArgumentException("Currency code has an incorrect format");
         }
 
         Currency currency = currencyService.getCurrencyByCode(codeCurrency);

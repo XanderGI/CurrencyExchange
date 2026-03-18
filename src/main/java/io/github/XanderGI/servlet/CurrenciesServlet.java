@@ -1,7 +1,6 @@
 package io.github.XanderGI.servlet;
 
 import io.github.XanderGI.dto.CurrencyRequestDto;
-import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.mapper.CurrencyMapper;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
@@ -34,8 +33,7 @@ public class CurrenciesServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!ValidationUtils.hasRequiredFields(req, "name", "code", "sign")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new IllegalArgumentException("The required form field is missing");
         }
 
         String name = req.getParameter("name");
@@ -43,13 +41,11 @@ public class CurrenciesServlet extends BaseServlet {
         String sign = req.getParameter("sign");
 
         if (!ValidationUtils.isCodeValid(code)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency code has an incorrect format"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new IllegalArgumentException("Currency code has an incorrect format");
         }
 
         if (!ValidationUtils.isSignValid(sign)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("Currency sign has an incorrect format"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new IllegalArgumentException("Currency sign has an incorrect format");
         }
 
         CurrencyRequestDto currencyDto = mapper.toCurrencyRequest(name, code, sign);

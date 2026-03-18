@@ -1,7 +1,6 @@
 package io.github.XanderGI.servlet;
 
 import io.github.XanderGI.dto.CurrencyPair;
-import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
 import io.github.XanderGI.model.ExchangeRate;
@@ -50,8 +49,7 @@ public class ExchangeRateServlet extends BaseServlet {
         String rateValue = bodyParams.get("rate");
 
         if (rateValue == null || rateValue.isEmpty()) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new IllegalArgumentException("The required form field is missing");
         }
 
         ExchangeRateRequestDto exchangeRateRequestDto = mapper.toRequestDto(
