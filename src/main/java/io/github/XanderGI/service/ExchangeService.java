@@ -16,6 +16,7 @@ import java.util.Optional;
 import static io.github.XanderGI.utils.ValidationUtils.validate;
 
 public class ExchangeService {
+    private static final String CROSS_CONVERT_CURRENCY = "USD";
     private final ExchangeRateDao exchangeRateDao;
     private final ExchangeRateMapper mapper;
 
@@ -97,15 +98,15 @@ public class ExchangeService {
     }
 
     private BigDecimal calculateRate(ExchangeRate exchangeRate, boolean toUsd) {
-        boolean isBaseUsd = exchangeRate.getBaseCurrency().code().equals("USD");
+        boolean isBaseUsd = exchangeRate.getBaseCurrency().code().equals(CROSS_CONVERT_CURRENCY);
         if (isBaseUsd == toUsd) {
-            return BigDecimal.ONE.divide(exchangeRate.getRate(), 6, RoundingMode.HALF_UP);
+            return BigDecimal.ONE.divide(exchangeRate.getRate(), 6, RoundingMode.HALF_EVEN);
         }
         return exchangeRate.getRate();
     }
 
     private Currency extractNonUsdCurrency(ExchangeRate exchangeRate) {
-        if (exchangeRate.getBaseCurrency().code().equals("USD")) {
+        if (exchangeRate.getBaseCurrency().code().equals(CROSS_CONVERT_CURRENCY)) {
             return exchangeRate.getTargetCurrency();
         }
         return exchangeRate.getBaseCurrency();
