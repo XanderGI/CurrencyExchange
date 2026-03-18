@@ -29,7 +29,7 @@ public class ContextListener implements ServletContextListener {
         ExchangeRateMapper exchangeRateMapper = ExchangeRateMapper.INSTANCE;
 
         CurrencyService currencyService = new CurrencyService(currencyDao, currencyMapper);
-        ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, currencyDao, exchangeRateMapper);
+        ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, currencyService, exchangeRateMapper);
         ExchangeService exchangeService = new ExchangeService(exchangeRateDao, exchangeRateMapper);
 
         sce.getServletContext().setAttribute("currencyService", currencyService);

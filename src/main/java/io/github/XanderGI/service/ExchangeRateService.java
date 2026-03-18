@@ -1,9 +1,7 @@
 package io.github.XanderGI.service;
 
-import io.github.XanderGI.dao.CurrencyDao;
 import io.github.XanderGI.dao.ExchangeRateDao;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
-import io.github.XanderGI.exception.CurrencyNotFoundException;
 import io.github.XanderGI.exception.ExchangeRateAlreadyExistsException;
 import io.github.XanderGI.exception.ExchangeRateNotFoundException;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
@@ -16,12 +14,12 @@ import static io.github.XanderGI.utils.ValidationUtils.validate;
 
 public class ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao;
-    private final CurrencyDao currencyDao;
+    private final CurrencyService currencyService;
     private final ExchangeRateMapper mapper;
 
-    public ExchangeRateService(ExchangeRateDao ExchangeRateDao, CurrencyDao currencyDao, ExchangeRateMapper exchangeRateMapper) {
+    public ExchangeRateService(ExchangeRateDao ExchangeRateDao, CurrencyService currencyService, ExchangeRateMapper exchangeRateMapper) {
         this.exchangeRateDao = ExchangeRateDao;
-        this.currencyDao = currencyDao;
+        this.currencyService = currencyService;
         this.mapper = exchangeRateMapper;
     }
 
@@ -37,10 +35,8 @@ public class ExchangeRateService {
     public ExchangeRate addExchangeRate(ExchangeRateRequestDto dto) {
         validate(dto);
 
-        Currency baseCurrency = currencyDao.findByCode(dto.baseCurrencyCode())
-                .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
-        Currency targetCurrency = currencyDao.findByCode(dto.targetCurrencyCode())
-                .orElseThrow(() -> new CurrencyNotFoundException("Currency not found by code"));
+        Currency baseCurrency = currencyService.getCurrencyByCode(dto.baseCurrencyCode());
+        Currency targetCurrency = currencyService.getCurrencyByCode(dto.targetCurrencyCode());
 
         ExchangeRate exchangeRate = mapper.toExchangeRateModel(dto, baseCurrency, targetCurrency);
 
