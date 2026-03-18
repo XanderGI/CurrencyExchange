@@ -43,13 +43,14 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
         List<ExchangeRate> exchangeRates = new ArrayList<>();
 
         try (Connection connection = DatabaseManager.getConnection();
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL)) {
 
             while (resultSet.next()) {
                 ExchangeRate exchangeRate = mapRow(resultSet);
                 exchangeRates.add(exchangeRate);
             }
+
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);
         }
@@ -64,12 +65,14 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
 
             preparedStatement.setString(1, baseCode);
             preparedStatement.setString(2, targetCode);
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 ExchangeRate exchangeRate = mapRow(resultSet);
                 return Optional.of(exchangeRate);
             }
+
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);
         }
@@ -86,6 +89,7 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
             preparedStatement.setLong(2, exchangeRate.getTargetCurrency().id());
             preparedStatement.setBigDecimal(3, exchangeRate.getRate());
             preparedStatement.executeUpdate();
+
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
 
             if (resultSet.next()) {
@@ -96,6 +100,7 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
                         exchangeRate.getRate()
                 ));
             }
+
         } catch (SQLException e) {
             if (SqlUtils.isUniqueConstraintViolation(e)) {
                 return Optional.empty();
@@ -141,6 +146,7 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
             preparedStatement.setString(2, baseCode);
             preparedStatement.setString(3, targetCode);
             preparedStatement.setString(4, targetCode);
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {

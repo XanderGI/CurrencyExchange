@@ -20,14 +20,14 @@ public class CurrencyDaoImpl implements CurrencyDao {
     public List<Currency> findAll() {
         List<Currency> currencies = new ArrayList<>();
         try (Connection connection = DatabaseManager.getConnection();
-             Statement statement = connection.createStatement()) {
-
-            ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL)) {
 
             while (resultSet.next()) {
                 Currency currency = mapRow(resultSet);
                 currencies.add(currency);
             }
+
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);
         }
@@ -40,11 +40,13 @@ public class CurrencyDaoImpl implements CurrencyDao {
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_FIND_BY_CODE)) {
 
             preparedStatement.setString(1, code);
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 return Optional.of(mapRow(resultSet));
             }
+
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);
         }
@@ -71,6 +73,7 @@ public class CurrencyDaoImpl implements CurrencyDao {
                         currency.sign()
                 ));
             }
+
         } catch (SQLException e) {
             if (SqlUtils.isUniqueConstraintViolation(e)) {
                 return Optional.empty();
