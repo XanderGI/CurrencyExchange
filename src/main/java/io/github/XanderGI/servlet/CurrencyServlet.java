@@ -22,17 +22,13 @@ public class CurrencyServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String pathInfo = req.getPathInfo();
+        String path = req.getPathInfo();
 
-        if (pathInfo == null || pathInfo.equals("/")) {
-            throw new IllegalArgumentException("Currency code is missing in URL");
-        }
+        ValidationUtils.checkPathIsValid(path, "Currency code is missing in URL");
 
-        String codeCurrency = pathInfo.substring(LEADING_SLASH_OFFSET).toUpperCase();
+        String codeCurrency = path.substring(LEADING_SLASH_OFFSET).toUpperCase();
 
-        if (!ValidationUtils.isCodeValid(codeCurrency)) {
-            throw new IllegalArgumentException("Currency code has an incorrect format");
-        }
+        ValidationUtils.checkCodeIsValid(codeCurrency);
 
         Currency currency = currencyService.getCurrencyByCode(codeCurrency);
 

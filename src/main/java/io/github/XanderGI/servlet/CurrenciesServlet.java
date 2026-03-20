@@ -32,21 +32,14 @@ public class CurrenciesServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (!ValidationUtils.hasRequiredFields(req, "name", "code", "sign")) {
-            throw new IllegalArgumentException("The required form field is missing");
-        }
+        ValidationUtils.checkRequiredFields(req, "name", "code", "sign");
 
         String name = req.getParameter("name");
         String code = req.getParameter("code").toUpperCase();
         String sign = req.getParameter("sign");
 
-        if (!ValidationUtils.isCodeValid(code)) {
-            throw new IllegalArgumentException("Currency code has an incorrect format");
-        }
-
-        if (!ValidationUtils.isSignValid(sign)) {
-            throw new IllegalArgumentException("Currency sign has an incorrect format");
-        }
+        ValidationUtils.checkCodeIsValid(code);
+        ValidationUtils.checkSignIsValid(sign);
 
         CurrencyRequestDto currencyDto = mapper.toCurrencyRequest(name, code, sign);
         Currency currency = currencyService.addCurrency(currencyDto);

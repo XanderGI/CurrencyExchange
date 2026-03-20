@@ -1,6 +1,5 @@
 package io.github.XanderGI.servlet;
 
-import io.github.XanderGI.dto.ErrorResponse;
 import io.github.XanderGI.dto.ExchangeRateRequestConvertDto;
 import io.github.XanderGI.dto.ExchangeRateResponseConvertDto;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
@@ -26,19 +25,14 @@ public class ExchangeServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (!ValidationUtils.hasRequiredFields(req, "to", "from", "amount")) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The required form field is missing"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
+        ValidationUtils.checkRequiredFields(req, "to", "from", "amount");
 
         String from = req.getParameter("from").toUpperCase();
         String to = req.getParameter("to").toUpperCase();
         String amount = req.getParameter("amount");
 
-        if (!ValidationUtils.isCodeValid(from) || !ValidationUtils.isCodeValid(to)) {
-            JsonMapper.sendJson(resp, new ErrorResponse("The currency codes of the exchangeRate incorrect in the address"), HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
+        ValidationUtils.checkCodeIsValid(from);
+        ValidationUtils.checkCodeIsValid(to);
 
         ExchangeRateRequestConvertDto reqDto = mapper.toConvertDto(from, to, amount);
         ExchangeRateResponseConvertDto respDto = exchangeService.convertCurrency(reqDto);

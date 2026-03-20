@@ -32,17 +32,14 @@ public class ExchangeRatesServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (!ValidationUtils.hasRequiredFields(req, "baseCurrencyCode", "targetCurrencyCode", "rate")) {
-            throw new IllegalArgumentException("The required form field is missing");
-        }
+        ValidationUtils.checkRequiredFields(req, "baseCurrencyCode", "targetCurrencyCode", "rate");
 
         String baseCode = req.getParameter("baseCurrencyCode").toUpperCase();
         String targetCode = req.getParameter("targetCurrencyCode").toUpperCase();
         String rate = req.getParameter("rate");
 
-        if (!ValidationUtils.isCodeValid(baseCode) || !ValidationUtils.isCodeValid(targetCode)) {
-            throw new IllegalArgumentException("The currency codes of the exchangeRate incorrect in the body");
-        }
+        ValidationUtils.checkCodeIsValid(baseCode);
+        ValidationUtils.checkCodeIsValid(targetCode);
 
         ExchangeRateRequestDto exchangeRateRequestDto = mapper.toRequestDto(baseCode, targetCode, rate);
         ExchangeRate exchangeRate = exchangeRateService.addExchangeRate(exchangeRateRequestDto);

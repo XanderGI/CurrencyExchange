@@ -48,9 +48,7 @@ public class ExchangeRateServlet extends BaseServlet {
         Map<String, String> bodyParams = getBodyParams(req);
         String rateValue = bodyParams.get("rate");
 
-        if (rateValue == null || rateValue.isEmpty()) {
-            throw new IllegalArgumentException("The required form field is missing");
-        }
+        ValidationUtils.checkStringNotBlank(rateValue);
 
         ExchangeRateRequestDto exchangeRateRequestDto = mapper.toRequestDto(
                 currencyPair.base(), currencyPair.target(), rateValue);
@@ -60,22 +58,20 @@ public class ExchangeRateServlet extends BaseServlet {
     }
 
     private CurrencyPair extractCurrencies(String path) {
-        if (path == null || path.equals("/")) {
-            throw new IllegalArgumentException("Currency codes of the exchangeRate are missing in the address");
-        }
+        ValidationUtils.checkPathIsValid(path, "Currency codes of the exchangeRate are missing in the address");
 
         if (path.length() != FULL_PATH_LENGTH) {
             throw new IllegalArgumentException("Currency codes of the exchangeRate are incorrect in the address");
         }
+
         int targetStart = LEADING_SLASH_OFFSET + CURRENCY_CODE_LENGTH;
 
         path = path.toUpperCase();
         String baseCode = path.substring(LEADING_SLASH_OFFSET, targetStart);
         String targetCode = path.substring(targetStart, targetStart + CURRENCY_CODE_LENGTH);
 
-        if (!(ValidationUtils.isCodeValid(baseCode) && ValidationUtils.isCodeValid(targetCode))) {
-            throw new IllegalArgumentException("Currency code has an incorrect format");
-        }
+        ValidationUtils.checkCodeIsValid(baseCode);
+        ValidationUtils.checkCodeIsValid(targetCode);
 
         return new CurrencyPair(baseCode, targetCode);
     }
