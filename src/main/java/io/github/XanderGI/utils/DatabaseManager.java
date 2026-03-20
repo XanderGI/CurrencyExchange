@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public final class DatabaseManager {
-    private static final HikariConfig config = new HikariConfig();
+    private static final String POOL_SIZE_DEFAULT = "20";
     private static HikariDataSource dataSource;
 
     private DatabaseManager() {
@@ -19,6 +19,12 @@ public final class DatabaseManager {
     }
 
     public static void init() {
+        if (dataSource != null) {
+            return;
+        }
+
+        HikariConfig config = new HikariConfig();
+
         try (InputStream stream = DatabaseManager.class.getClassLoader().getResourceAsStream("application.properties")) {
             if (stream == null) {
                 throw new RuntimeException("properties file not found!");
@@ -29,8 +35,10 @@ public final class DatabaseManager {
 
             config.setJdbcUrl(properties.getProperty("db.url"));
             config.setDriverClassName(properties.getProperty("db.driver"));
+            String poolSize = properties.getProperty("db.pool.size", POOL_SIZE_DEFAULT);
+            config.setMaximumPoolSize(Integer.parseInt(poolSize));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to load database application.properties", e);
         }
 
         String envUrl = System.getenv("DB_URL");
@@ -38,7 +46,6 @@ public final class DatabaseManager {
             config.setJdbcUrl(envUrl);
         }
 
-        config.setMaximumPoolSize(20);
         dataSource = new HikariDataSource(config);
     }
 

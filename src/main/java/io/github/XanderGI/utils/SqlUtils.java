@@ -11,7 +11,7 @@ public final class SqlUtils {
 
     }
 
-    public static boolean  isUniqueConstraintViolation(SQLException e) {
+    public static boolean isUniqueConstraintViolation(SQLException e) {
         return e instanceof SQLiteException sqlEx &&
                 sqlEx.getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT_UNIQUE;
     }
