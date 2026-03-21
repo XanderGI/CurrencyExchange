@@ -2,6 +2,7 @@ package io.github.XanderGI.servlet;
 
 import io.github.XanderGI.dto.CurrencyPair;
 import io.github.XanderGI.dto.ExchangeRateRequestDto;
+import io.github.XanderGI.listener.ContextListener;
 import io.github.XanderGI.mapper.ExchangeRateMapper;
 import io.github.XanderGI.model.ExchangeRate;
 import io.github.XanderGI.service.ExchangeRateService;
@@ -26,8 +27,8 @@ public class ExchangeRateServlet extends BaseServlet {
 
     @Override
     public void init() {
-        exchangeRateService = (ExchangeRateService) getServletContext().getAttribute("exchangeRateService");
-        mapper = (ExchangeRateMapper) getServletContext().getAttribute("exchangeRateMapper");
+        exchangeRateService = (ExchangeRateService) getServletContext().getAttribute(ContextListener.EXCHANGE_RATE_SERVICE_ATTRIBUTE);
+        mapper = (ExchangeRateMapper) getServletContext().getAttribute(ContextListener.EXCHANGE_RATE_MAPPER_ATTRIBUTE);
     }
 
     @Override

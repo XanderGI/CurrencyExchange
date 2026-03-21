@@ -17,6 +17,12 @@ import org.flywaydb.core.Flyway;
 
 @WebListener
 public class ContextListener implements ServletContextListener {
+    public static final String CURRENCY_SERVICE_ATTRIBUTE = "currencyService";
+    public static final String EXCHANGE_RATE_SERVICE_ATTRIBUTE = "exchangeRateService";
+    public static final String EXCHANGE_SERVICE_ATTRIBUTE = "exchangeService";
+    public static final String CURRENCY_MAPPER_ATTRIBUTE = "currencyMapper";
+    public static final String EXCHANGE_RATE_MAPPER_ATTRIBUTE = "exchangeRateMapper";
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         DatabaseManager.init();
@@ -32,11 +38,11 @@ public class ContextListener implements ServletContextListener {
         ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, currencyService, exchangeRateMapper);
         ExchangeService exchangeService = new ExchangeService(exchangeRateDao, exchangeRateMapper);
 
-        sce.getServletContext().setAttribute("currencyService", currencyService);
-        sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
-        sce.getServletContext().setAttribute("exchangeService", exchangeService);
-        sce.getServletContext().setAttribute("currencyMapper", currencyMapper);
-        sce.getServletContext().setAttribute("exchangeRateMapper", exchangeRateMapper);
+        sce.getServletContext().setAttribute(CURRENCY_SERVICE_ATTRIBUTE, currencyService);
+        sce.getServletContext().setAttribute(EXCHANGE_RATE_SERVICE_ATTRIBUTE, exchangeRateService);
+        sce.getServletContext().setAttribute(EXCHANGE_SERVICE_ATTRIBUTE, exchangeService);
+        sce.getServletContext().setAttribute(CURRENCY_MAPPER_ATTRIBUTE, currencyMapper);
+        sce.getServletContext().setAttribute(EXCHANGE_RATE_MAPPER_ATTRIBUTE, exchangeRateMapper);
     }
 
     @Override

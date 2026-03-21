@@ -1,5 +1,6 @@
 package io.github.XanderGI.servlet;
 
+import io.github.XanderGI.listener.ContextListener;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
 import io.github.XanderGI.utils.JsonMapper;
@@ -17,7 +18,7 @@ public class CurrencyServlet extends BaseServlet {
 
     @Override
     public void init() {
-        currencyService = (CurrencyService) getServletContext().getAttribute("currencyService");
+        currencyService = (CurrencyService) getServletContext().getAttribute(ContextListener.CURRENCY_SERVICE_ATTRIBUTE);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.github.XanderGI.servlet;
 
 import io.github.XanderGI.dto.CurrencyRequestDto;
+import io.github.XanderGI.listener.ContextListener;
 import io.github.XanderGI.mapper.CurrencyMapper;
 import io.github.XanderGI.model.Currency;
 import io.github.XanderGI.service.CurrencyService;
@@ -20,8 +21,8 @@ public class CurrenciesServlet extends BaseServlet {
 
     @Override
     public void init() {
-        currencyService = (CurrencyService) getServletContext().getAttribute("currencyService");
-        mapper = (CurrencyMapper) getServletContext().getAttribute("currencyMapper");
+        currencyService = (CurrencyService) getServletContext().getAttribute(ContextListener.CURRENCY_SERVICE_ATTRIBUTE);
+        mapper = (CurrencyMapper) getServletContext().getAttribute(ContextListener.CURRENCY_MAPPER_ATTRIBUTE);
     }
 
     @Override
