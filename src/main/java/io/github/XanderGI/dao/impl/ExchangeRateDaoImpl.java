@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ExchangeRateDaoImpl implements ExchangeRateDao {
-    private final static String SQL_SELECT_ALL_WITH_JOINS = """
+    private static final String SQL_SELECT_ALL_WITH_JOINS = """
             SELECT 
                     ExchangeRates.ID, Rate,
                     base.ID AS base_id, base.FullName AS base_name, base.code AS base_code, base.sign AS base_sign,
@@ -23,18 +23,18 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
             JOIN Currencies target ON ExchangeRates.TargetCurrencyId = target.ID
             """;
 
-    private final static String SQL_FIND_ALL = SQL_SELECT_ALL_WITH_JOINS;
-    private final static String SQL_FIND_BY_CODES = SQL_SELECT_ALL_WITH_JOINS + "WHERE base.code = ? AND target.code = ?";
+    private static final String SQL_FIND_ALL = SQL_SELECT_ALL_WITH_JOINS;
+    private static final String SQL_FIND_BY_CODES = SQL_SELECT_ALL_WITH_JOINS + "WHERE base.code = ? AND target.code = ?";
 
-    private final static String SQL_SAVE_EXCHANGE_RATE = """
+    private static final String SQL_SAVE_EXCHANGE_RATE = """
             INSERT INTO ExchangeRates(BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?,?,?)
             """;
 
-    private final static String SQL_UPDATE_EXCHANGE_RATE = """
+    private static final String SQL_UPDATE_EXCHANGE_RATE = """
             UPDATE ExchangeRates SET Rate = ? WHERE ID = ?
             """;
 
-    private final static String SQL_FIND_ALL_USD_RELATED_PAIRS = SQL_SELECT_ALL_WITH_JOINS + """
+    private static final String SQL_FIND_ALL_USD_RELATED_PAIRS = SQL_SELECT_ALL_WITH_JOINS + """
              WHERE (base.code = 'USD' OR target.code = 'USD') AND ((base.code = ? OR target.code = ?) OR (base.code = ? OR target.code = ?))
             """;
 
@@ -66,13 +66,12 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
             preparedStatement.setString(1, baseCode);
             preparedStatement.setString(2, targetCode);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                ExchangeRate exchangeRate = mapRow(resultSet);
-                return Optional.of(exchangeRate);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    ExchangeRate exchangeRate = mapRow(resultSet);
+                    return Optional.of(exchangeRate);
+                }
             }
-
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);
         }
@@ -90,17 +89,16 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
             preparedStatement.setBigDecimal(3, exchangeRate.getRate());
             preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
-            if (resultSet.next()) {
-                return Optional.of(new ExchangeRate(
-                        resultSet.getLong(1),
-                        exchangeRate.getBaseCurrency(),
-                        exchangeRate.getTargetCurrency(),
-                        exchangeRate.getRate()
-                ));
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return Optional.of(new ExchangeRate(
+                            resultSet.getLong(1),
+                            exchangeRate.getBaseCurrency(),
+                            exchangeRate.getTargetCurrency(),
+                            exchangeRate.getRate()
+                    ));
+                }
             }
-
         } catch (SQLException e) {
             if (SqlUtils.isUniqueConstraintViolation(e)) {
                 return Optional.empty();
@@ -147,11 +145,11 @@ public class ExchangeRateDaoImpl implements ExchangeRateDao {
             preparedStatement.setString(3, targetCode);
             preparedStatement.setString(4, targetCode);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                ExchangeRate exchangeRate = mapRow(resultSet);
-                exchangeRates.add(exchangeRate);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    ExchangeRate exchangeRate = mapRow(resultSet);
+                    exchangeRates.add(exchangeRate);
+                }
             }
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);

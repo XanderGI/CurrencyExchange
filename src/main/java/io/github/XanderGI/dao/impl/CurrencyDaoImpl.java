@@ -41,12 +41,11 @@ public class CurrencyDaoImpl implements CurrencyDao {
 
             preparedStatement.setString(1, code);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                return Optional.of(mapRow(resultSet));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(mapRow(resultSet));
+                }
             }
-
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);
         }
@@ -63,17 +62,16 @@ public class CurrencyDaoImpl implements CurrencyDao {
             preparedStatement.setString(3, currency.sign());
             preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
-            if (resultSet.next()) {
-                return Optional.of(new Currency(
-                        resultSet.getLong(1),
-                        currency.fullName(),
-                        currency.code(),
-                        currency.sign()
-                ));
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return Optional.of(new Currency(
+                            resultSet.getLong(1),
+                            currency.fullName(),
+                            currency.code(),
+                            currency.sign()
+                    ));
+                }
             }
-
         } catch (SQLException e) {
             if (SqlUtils.isUniqueConstraintViolation(e)) {
                 return Optional.empty();
