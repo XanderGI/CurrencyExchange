@@ -17,8 +17,13 @@ import static io.github.XanderGI.utils.ValidationUtils.validate;
 
 public class ExchangeService {
     private static final String CROSS_CONVERT_CURRENCY = "USD";
+    private static final int RATE_SCALE = 6;
+    private static final int AMOUNT_SCALE = 2;
     private final ExchangeRateDao exchangeRateDao;
     private final ExchangeRateMapper mapper;
+
+    private record ConversionResult(Currency base, Currency target, BigDecimal rate) {
+    }
 
     public ExchangeService(ExchangeRateDao exchangeRateDao, ExchangeRateMapper exchangeRateMapper) {
         this.exchangeRateDao = exchangeRateDao;
@@ -32,83 +37,88 @@ public class ExchangeService {
         String currencyCodeTo = dto.targetCurrencyCode();
         BigDecimal amount = dto.amount();
 
-
-        return convertDirect(currencyCodeFrom, currencyCodeTo, amount)
-                .or(() -> convertReverse(currencyCodeFrom, currencyCodeTo, amount))
-                .or(() -> convertCross(currencyCodeFrom, currencyCodeTo, amount))
+        ConversionResult conversionResult = convertDirect(currencyCodeFrom, currencyCodeTo)
+                .or(() -> convertReverse(currencyCodeFrom, currencyCodeTo))
+                .or(() -> convertCross(currencyCodeFrom, currencyCodeTo))
                 .orElseThrow(() -> new ExchangeRateNotFoundException(
                         "ExchangeRate for pair " + currencyCodeFrom + "-" + currencyCodeTo + " not found"
                 ));
+
+        BigDecimal convertedAmount = amount.multiply(conversionResult.rate()).setScale(AMOUNT_SCALE, RoundingMode.HALF_EVEN);
+
+        return mapper.toResponseDto(
+                conversionResult.base(),
+                conversionResult.target(),
+                conversionResult.rate(),
+                amount,
+                convertedAmount
+        );
     }
 
-    private Optional<ExchangeRateResponseConvertDto> convertDirect(String base, String target, BigDecimal amount) {
+    private Optional<ConversionResult> convertDirect(String base, String target) {
         return exchangeRateDao.findByCodes(base, target)
                 .map(exRate -> {
-                    BigDecimal rate = exRate.getRate().setScale(6, RoundingMode.HALF_EVEN);
-                    BigDecimal convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
-
-                    return mapper.toResponseDto(
-                            exRate.getBaseCurrency(),
-                            exRate.getTargetCurrency(),
-                            rate,
-                            amount,
-                            convertedAmount
-                    );
+                    BigDecimal rate = exRate.getRate().setScale(RATE_SCALE, RoundingMode.HALF_EVEN);
+                    return new ConversionResult(exRate.getBaseCurrency(), exRate.getTargetCurrency(), rate);
                 });
     }
 
-    private Optional<ExchangeRateResponseConvertDto> convertReverse(String base, String target, BigDecimal amount) {
+    private Optional<ConversionResult> convertReverse(String base, String target) {
         return exchangeRateDao.findByCodes(target, base)
                 .map(exRate -> {
-                    BigDecimal rate = BigDecimal.ONE.divide(exRate.getRate(), 6, RoundingMode.HALF_EVEN);
-                    BigDecimal convertedAmount = rate.multiply(amount).setScale(2, RoundingMode.HALF_EVEN);
-
-                    return mapper.toResponseDto(
-                            exRate.getTargetCurrency(),
-                            exRate.getBaseCurrency(),
-                            rate,
-                            amount,
-                            convertedAmount
-                    );
+                    BigDecimal rate = BigDecimal.ONE.divide(exRate.getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
+                    return new ConversionResult(exRate.getTargetCurrency(), exRate.getBaseCurrency(), rate);
                 });
     }
 
-    private Optional<ExchangeRateResponseConvertDto> convertCross(String base, String target, BigDecimal amount) {
+    private Optional<ConversionResult> convertCross(String base, String target) {
         List<ExchangeRate> exchangeRates = exchangeRateDao.findAllUsdRelatedPairs(base, target);
+        Optional<ExchangeRate> usdToBaseOpt = findRateForCurrency(base, exchangeRates);
+        Optional<ExchangeRate> usdToTargetOpt = findRateForCurrency(target, exchangeRates);
 
-        return findRateForCurrency(base, exchangeRates)
-                .flatMap(usdToBaseRate -> findRateForCurrency(target, exchangeRates)
-                        .map(usdToTargetRate -> {
-                            BigDecimal rateBaseToUsd = calculateRate(usdToBaseRate, true);
-                            BigDecimal rateUsdToTarget = calculateRate(usdToTargetRate, false);
+        if (usdToBaseOpt.isEmpty() || usdToTargetOpt.isEmpty()) {
+            return Optional.empty();
+        }
 
-                            Currency baseCurrency = extractNonUsdCurrency(usdToBaseRate);
-                            Currency targetCurrency = extractNonUsdCurrency(usdToTargetRate);
-                            BigDecimal rate = rateBaseToUsd.multiply(rateUsdToTarget).setScale(6, RoundingMode.HALF_EVEN);
-                            BigDecimal convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
+        ExchangeRate usdToBaseRate = usdToBaseOpt.get();
+        ExchangeRate usdToTargetRate = usdToTargetOpt.get();
 
-                            return mapper.toResponseDto(
-                                    baseCurrency,
-                                    targetCurrency,
-                                    rate,
-                                    amount,
-                                    convertedAmount
-                            );
-                        }));
+        BigDecimal rateBaseToUsd = calculateRateToUsd(usdToBaseRate);
+        BigDecimal rateUsdToTarget = calculateRateFromUsd(usdToTargetRate);
+        Currency baseCurrency = extractNonUsdCurrency(usdToBaseRate);
+        Currency targetCurrency = extractNonUsdCurrency(usdToTargetRate);
+        BigDecimal rate = rateBaseToUsd.multiply(rateUsdToTarget).setScale(RATE_SCALE, RoundingMode.HALF_EVEN);
+
+        ConversionResult result = new ConversionResult(baseCurrency, targetCurrency, rate);
+
+        return Optional.of(result);
     }
 
-    private BigDecimal calculateRate(ExchangeRate exchangeRate, boolean toUsd) {
-        boolean isBaseUsd = exchangeRate.getBaseCurrency().code().equals(CROSS_CONVERT_CURRENCY);
-        if (isBaseUsd == toUsd) {
-            return BigDecimal.ONE.divide(exchangeRate.getRate(), 6, RoundingMode.HALF_EVEN);
+    private BigDecimal calculateRateToUsd(ExchangeRate exchangeRate) {
+        boolean isUsdBase = exchangeRate.getBaseCurrency().code().equals(CROSS_CONVERT_CURRENCY);
+
+        if (isUsdBase) {
+            return BigDecimal.ONE.divide(exchangeRate.getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
         }
+
         return exchangeRate.getRate();
+    }
+
+    private BigDecimal calculateRateFromUsd(ExchangeRate exchangeRate) {
+        boolean isUsdBase = exchangeRate.getBaseCurrency().code().equals(CROSS_CONVERT_CURRENCY);
+
+        if (isUsdBase) {
+            return exchangeRate.getRate();
+        }
+
+        return BigDecimal.ONE.divide(exchangeRate.getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
     }
 
     private Currency extractNonUsdCurrency(ExchangeRate exchangeRate) {
         if (exchangeRate.getBaseCurrency().code().equals(CROSS_CONVERT_CURRENCY)) {
             return exchangeRate.getTargetCurrency();
         }
+
         return exchangeRate.getBaseCurrency();
     }
 
