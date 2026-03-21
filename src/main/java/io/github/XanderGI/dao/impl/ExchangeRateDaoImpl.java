@@ -14,14 +14,14 @@ import java.util.Optional;
 
 public class ExchangeRateDaoImpl implements ExchangeRateDao {
     private static final String SQL_SELECT_ALL_WITH_JOINS = """
-            SELECT 
+            SELECT\s
                     ExchangeRates.ID, Rate,
                     base.ID AS base_id, base.FullName AS base_name, base.code AS base_code, base.sign AS base_sign,
                     target.ID AS target_id, target.FullName AS target_name, target.code AS target_code, target.sign AS target_sign
             FROM ExchangeRates
             JOIN Currencies base ON ExchangeRates.BaseCurrencyId = base.ID
             JOIN Currencies target ON ExchangeRates.TargetCurrencyId = target.ID
-            """;
+           \s""";
 
     private static final String SQL_FIND_ALL = SQL_SELECT_ALL_WITH_JOINS;
     private static final String SQL_FIND_BY_CODES = SQL_SELECT_ALL_WITH_JOINS + "WHERE base.code = ? AND target.code = ?";

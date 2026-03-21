@@ -63,7 +63,7 @@ public final class ValidationUtils {
     public static void validate(ExchangeRateRequestDto dto) {
         checkCurrencyCodesAreDifferent(dto.baseCurrencyCode(), dto.targetCurrencyCode());
 
-        if (!isPositive(dto.rate())) {
+        if (isNotPositive(dto.rate())) {
             throw new IllegalArgumentException("The rate value must be positive");
         }
     }
@@ -71,7 +71,7 @@ public final class ValidationUtils {
     public static void validate(ExchangeRateRequestConvertDto dto) {
         checkCurrencyCodesAreDifferent(dto.baseCurrencyCode(), dto.targetCurrencyCode());
 
-        if (!isPositive(dto.amount())) {
+        if (isNotPositive(dto.amount())) {
             throw new IllegalArgumentException("The amount value must be positive");
         }
     }
@@ -82,7 +82,7 @@ public final class ValidationUtils {
         }
     }
 
-    private static boolean isPositive(BigDecimal value) {
+    private static boolean isNotPositive(BigDecimal value) {
         return value != null && value.signum() > 0;
     }
 }
