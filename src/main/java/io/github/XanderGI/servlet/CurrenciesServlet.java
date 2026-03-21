@@ -39,6 +39,7 @@ public class CurrenciesServlet extends BaseServlet {
         String code = req.getParameter("code").toUpperCase();
         String sign = req.getParameter("sign");
 
+        ValidationUtils.checkNameIsValid(name);
         ValidationUtils.checkCodeIsValid(code);
         ValidationUtils.checkSignIsValid(sign);
 

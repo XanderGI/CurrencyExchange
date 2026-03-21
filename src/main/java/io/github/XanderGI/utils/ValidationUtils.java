@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 public final class ValidationUtils {
+    private static final int MAX_CURRENCY_NAME_LENGTH = 50;
     private static final int CURRENCY_CODE_LENGTH = 3;
     private static final int MAX_SIGN_LENGTH = 3;
 
@@ -20,6 +21,12 @@ public final class ValidationUtils {
             if (value == null || value.isBlank()) {
                 throw new IllegalArgumentException("The required form field is missing: " + field);
             }
+        }
+    }
+
+    public static void checkNameIsValid(String name) {
+        if (name == null || name.isBlank() || name.length() > MAX_CURRENCY_NAME_LENGTH) {
+            throw new IllegalArgumentException("Currency name is invalid or exceeds the maximum length of " + MAX_CURRENCY_NAME_LENGTH + " characters");
         }
     }
 

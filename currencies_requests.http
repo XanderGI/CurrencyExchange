@@ -34,6 +34,12 @@ Content-Type: application/x-www-form-urlencoded
 
 name=Russian Ruble&code=RUB&sign=₽
 
+### Проверка на максимальную длину названия валюты (400)
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=qwertqwertqwertqwertqwertqwertqwertqwertqwertqwert&code=QWE&sign=R
+
 ### Попытка добавить валюту с sign > 3 (400)
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
