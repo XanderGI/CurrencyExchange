@@ -83,6 +83,6 @@ public final class ValidationUtils {
     }
 
     private static boolean isNotPositive(BigDecimal value) {
-        return value != null && value.signum() > 0;
+        return value == null || value.signum() <= 0;
     }
 }
